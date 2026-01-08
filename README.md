@@ -1,39 +1,163 @@
-# 🎬 Movie Review App – Backend (Letterboxd Clone)
+# 🎬 Letterboxd Clone – Movie Review & Social Networking Platform
 
-A robust backend API for a **movie review and social networking application** inspired by [Letterboxd](https://letterboxd.com/).  
-Developed during my learning phase, this project focuses on **user interaction, review management, and social networking features**.
+A full-stack movie review and social networking web application inspired by **Letterboxd**, built using the **MERN stack**.  
+This platform allows users to explore movies, write reviews, maintain personal watchlists and diaries, and interact socially through following other users and activity feeds.
 
 ---
 
-## 📌 Features
+## 🚀 Features
 
 ### 🔐 Authentication & User Management
 - User registration and login
-- JWT-based authentication & bcrypt password hashing
-- Profile update & management
+- Secure **JWT-based authentication**
+- **bcrypt** password hashing
+- Profile creation, update, and management
+
+---
 
 ### 🎥 Movie & Review System
-- CRUD operations for movies (internal database)
-- Write, edit, and delete reviews with **star ratings (0–5)**
+- Create, read, update, and delete movies (internal database)
+- Write, edit, and delete movie reviews
+- Star-based rating system (0–5 stars)
 - Personal **film diary** for logged movies
 - Search movies by title
 
-### 👥 Social Features
+---
+
+### 👥 Social Networking Features
 - Follow / Unfollow other users
-- Follower / Following count
+- Follower & Following counts
 - Personalized **activity feed** showing reviews from followed users
 - Personal **watchlist** for future viewing
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-| Technology  | Purpose |
-|-------------|---------|
+| Technology | Purpose |
+|----------|--------|
 | **Node.js** | Backend runtime |
 | **Express.js** | Web framework |
-| **MongoDB + Mongoose** | NoSQL database & schema modeling |
-| **JavaScript (ES6)** | Primary language |
+| **MongoDB** | NoSQL database |
+| **Mongoose** | Schema modeling |
+| **React.js** | Frontend UI |
+| **JavaScript (ES6)** | Core language |
 | **JWT** | Authentication |
 | **bcrypt** | Password hashing |
+| **HTML & CSS** | UI structure & styling |
 | **Git & GitHub** | Version control |
+
+---
+
+## 🧱 Project Architecture
+```
+letterboxd-clone/
+│
+├── backend/
+│   │   ├── models/        
+│   │   ├── routes/        
+│   │   ├── controllers/  
+│   │   ├── middleware/
+│   │   ├── src/   
+│   │   └── utils/          
+│   │
+│   ├── server.js
+│   ├── app.js         
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/   
+│   │   ├── pages/        
+│   │   ├── context/      
+│   │   ├── services/     
+│   │   ├── App.css
+│   │   ├── index.jsx
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   └── package.json
+│
+└── README.md
+```
+
+## API Highlights
+```
+🔐 Authentication & User APIs
+
+POST /api/v1/users/login – User login and JWT token generation
+
+POST /api/v1/users/logout – Logout user (JWT-protected)
+```
+
+👤 User Profile APIs
+```
+GET /api/v1/users/:userId – Fetch public user profile
+
+GET /api/v1/users/:userId/reviews – Fetch all reviews written by a specific user
+
+Logged-in User (Protected)
+
+GET /api/v1/users/me/profile – Fetch logged-in user’s profile
+
+PUT /api/v1/users/me/update – Update logged-in user’s profile
+```
+🎥 Watchlist, Feed & Diary APIs
+```
+GET /api/v1/users/me/watchlist – Get user’s watchlist
+
+POST /api/v1/users/me/watchlist/:movieId – Add movie to watchlist
+
+DELETE /api/v1/users/me/watchlist/:movieId – Remove movie from watchlist
+
+GET /api/v1/users/me/feed – Get personalized activity feed
+
+GET /api/v1/users/me/diary – Fetch user’s personal movie diary
+```
+🤝 Social (Follow System) APIs
+```
+POST /api/v1/users/:userIdToFollow/follow – Follow a user
+
+DELETE /api/v1/users/:userIdToUnfollow/unfollow – Unfollow a user
+
+GET /api/v1/users/:userId/followers – Get user’s followers (public)
+
+GET /api/v1/users/:userId/following – Get users followed by a user (public)
+```
+🎬 Movie APIs
+```
+GET /api/v1/movies/search?query=keyword – Search movies by title
+
+GET /api/v1/movies/popular – Fetch popular movies
+
+GET /api/v1/movies/:id – Fetch movie details by ID
+```
+✍️ Review APIs
+```
+GET /api/v1/reviews/:movieId/reviews – Get all reviews for a movie (supports pagination)
+
+POST /api/v1/reviews/:movieId/addReview – Add a review for a movie (JWT-protected)
+
+Single Review Management
+
+GET /api/v1/reviews/:id/getReview – Fetch a single review
+
+PUT /api/v1/reviews/:id/updateReview – Update a review (JWT-protected)
+
+DELETE /api/v1/reviews/:id/deleteReview – Delete a review (JWT-protected)
+```
+
+
+## 📌 Key Learning Outcomes
+
+- End-to-end MERN stack development
+
+- Secure authentication & authorization
+
+- RESTful API design
+
+- Social media-style data modeling
+
+- Scalable backend architecture
+
+- Real-world full-stack project experience
