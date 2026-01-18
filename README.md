@@ -1,13 +1,13 @@
-# 🎬 Letterboxd Clone – Movie Review & Social Networking Platform
+#  Letterboxd Clone – Movie Review & Social Networking Platform
 
 A full-stack movie review and social networking web application inspired by **Letterboxd**, built using the **MERN stack**.  
 This platform allows users to explore movies, write reviews, maintain personal watchlists and diaries, and interact socially through following other users and activity feeds.
 
 ---
 
-## 🚀 Features
+##  Features
 
-### 🔐 Authentication & User Management
+###  Authentication & User Management
 - User registration and login
 - Secure **JWT-based authentication**
 - **bcrypt** password hashing
@@ -15,7 +15,7 @@ This platform allows users to explore movies, write reviews, maintain personal w
 
 ---
 
-### 🎥 Movie & Review System
+###  Movie & Review System
 - Create, read, update, and delete movies (internal database)
 - Write, edit, and delete movie reviews
 - Star-based rating system (0–5 stars)
@@ -24,7 +24,7 @@ This platform allows users to explore movies, write reviews, maintain personal w
 
 ---
 
-### 👥 Social Networking Features
+###  Social Networking Features
 - Follow / Unfollow other users
 - Follower & Following counts
 - Personalized **activity feed** showing reviews from followed users
@@ -32,7 +32,7 @@ This platform allows users to explore movies, write reviews, maintain personal w
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 | Technology | Purpose |
 |----------|--------|
@@ -49,7 +49,7 @@ This platform allows users to explore movies, write reviews, maintain personal w
 
 ---
 
-## 🧱 Project Architecture
+##  Project Architecture
 ```
 letterboxd-clone/
 │
@@ -83,14 +83,14 @@ letterboxd-clone/
 
 ## API Highlights
 ```
-🔐 Authentication & User APIs
+ Authentication & User APIs
 
 POST /api/v1/users/login – User login and JWT token generation
 
 POST /api/v1/users/logout – Logout user (JWT-protected)
 ```
 
-👤 User Profile APIs
+User Profile APIs
 ```
 GET /api/v1/users/:userId – Fetch public user profile
 
@@ -102,7 +102,7 @@ GET /api/v1/users/me/profile – Fetch logged-in user’s profile
 
 PUT /api/v1/users/me/update – Update logged-in user’s profile
 ```
-🎥 Watchlist, Feed & Diary APIs
+Watchlist, Feed & Diary APIs
 ```
 GET /api/v1/users/me/watchlist – Get user’s watchlist
 
@@ -114,7 +114,7 @@ GET /api/v1/users/me/feed – Get personalized activity feed
 
 GET /api/v1/users/me/diary – Fetch user’s personal movie diary
 ```
-🤝 Social (Follow System) APIs
+Social (Follow System) APIs
 ```
 POST /api/v1/users/:userIdToFollow/follow – Follow a user
 
@@ -124,7 +124,7 @@ GET /api/v1/users/:userId/followers – Get user’s followers (public)
 
 GET /api/v1/users/:userId/following – Get users followed by a user (public)
 ```
-🎬 Movie APIs
+Movie APIs
 ```
 GET /api/v1/movies/search?query=keyword – Search movies by title
 
@@ -132,7 +132,7 @@ GET /api/v1/movies/popular – Fetch popular movies
 
 GET /api/v1/movies/:id – Fetch movie details by ID
 ```
-✍️ Review APIs
+Review APIs
 ```
 GET /api/v1/reviews/:movieId/reviews – Get all reviews for a movie (supports pagination)
 
@@ -148,7 +148,7 @@ DELETE /api/v1/reviews/:id/deleteReview – Delete a review (JWT-protected)
 ```
 
 
-## 📌 Key Learning Outcomes
+##  Key Learning Outcomes
 
 - End-to-end MERN stack development
 
