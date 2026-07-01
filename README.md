@@ -1,4 +1,4 @@
-#  Letterboxd Clone – Movie Review & Social Networking Platform
+#  Movieboxd - Movie Review & Social Networking Platform
 
 A full-stack movie review and social networking web application inspired by **Letterboxd**, built using the **MERN stack**.  
 This platform allows users to explore movies, write reviews, maintain personal watchlists and diaries, and interact socially through following other users and activity feeds.
@@ -18,7 +18,7 @@ This platform allows users to explore movies, write reviews, maintain personal w
 ###  Movie & Review System
 - Create, read, update, and delete movies (internal database)
 - Write, edit, and delete movie reviews
-- Star-based rating system (0–5 stars)
+- Star-based rating system (0-5 stars)
 - Personal **film diary** for logged movies
 - Search movies by title
 
@@ -146,18 +146,3 @@ PUT /api/v1/reviews/:id/updateReview – Update a review (JWT-protected)
 
 DELETE /api/v1/reviews/:id/deleteReview – Delete a review (JWT-protected)
 ```
-
-
-##  Key Learning Outcomes
-
-- End-to-end MERN stack development
-
-- Secure authentication & authorization
-
-- RESTful API design
-
-- Social media-style data modeling
-
-- Scalable backend architecture
-
-- Real-world full-stack project experience
