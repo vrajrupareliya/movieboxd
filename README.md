@@ -1,6 +1,6 @@
 #  Movieboxd - Movie Review & Social Networking Platform
 
-A full-stack movie review and social networking web application inspired by **Letterboxd**, built using the **MERN stack**.  
+A Backend for movie review and social networking web application inspired by **Letterboxd**, built using the **MERN stack**.  
 This platform allows users to explore movies, write reviews, maintain personal watchlists and diaries, and interact socially through following other users and activity feeds.
 
 ---
