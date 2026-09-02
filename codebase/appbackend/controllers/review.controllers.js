@@ -159,13 +159,16 @@ const addReview = asynchandler( async (req, res, next) => {
     );
   } catch (err) {
     console.error('Error in addReview:', err);
+    if (err instanceof ApiError || err.statusCode) {
+        throw err;
+    }
     if (err.code === 11000) { // Duplicate key error code
         throw new ApiError(400, 'You have already submitted a review for this movie.');
     }
     if (err.name === 'ValidationError') {
         throw new ApiError(400, Object.values(err.errors).map(val => val.message).join(', '));
     }
-    throw new ApiError(500, 'Server Error');
+    throw new ApiError(500, err.message || 'Server Error');
   }
 });
 

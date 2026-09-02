@@ -7,8 +7,20 @@ const app = express()
  
 app.use(cookieParser());
 
+const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (
+            allowedOrigins.includes(origin) ||
+            /^http:\/\/localhost(:\d+)?$/.test(origin) ||
+            /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
+        ) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }));
 
@@ -31,8 +43,17 @@ import movieRouter from "./routes/movie.routes.js";
 //routes decalaration
 app.use("/api/v1/movies",movieRouter)
 
-//import REVIEW_ROUTER from "./routes/review.routes.js";
+// Global error handling middleware
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || err.statuscode || 500;
+    const message = err.message || "Internal Server Error";
+    return res.status(statusCode).json({
+        statusCode,
+        data: null,
+        message,
+        success: false,
+        errors: err.errors || []
+    });
+});
 
-// For general review operations like getting ALL reviews or a review by its direct ID
-//app.use('/api/v1/reviews', REVIEW_ROUTER); // Mount reviewRouter at the top level
 export { app }
