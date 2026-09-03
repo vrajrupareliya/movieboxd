@@ -26,8 +26,23 @@ const HomePage = () => {
         const movies = await moviesApi.getPopular();
         setPopularMovies(movies);
         if (movies.length > 0) {
-          // Pick the first as spotlight or highest rated
-          setFeaturedMovie(movies[0]);
+          // Feature 'Interstellar' in the hero spotlight
+          let featured = movies.find(
+            (m) => m.title?.toLowerCase() === 'interstellar'
+          );
+          if (!featured) {
+            try {
+              const searchResults = await moviesApi.search('Interstellar');
+              if (searchResults?.length > 0) {
+                featured = searchResults.find(
+                  (m) => m.title?.toLowerCase() === 'interstellar'
+                ) || searchResults[0];
+              }
+            } catch {
+              // Ignore search fallback error
+            }
+          }
+          setFeaturedMovie(featured || movies[0]);
         }
       } catch {
         // Handled silently
@@ -81,7 +96,6 @@ const HomePage = () => {
             alignItems: 'flex-end',
             padding: 'clamp(1.5rem, 4vw, 3rem)',
             background: `linear-gradient(to top, rgba(11, 14, 20, 0.98) 0%, rgba(11, 14, 20, 0.7) 50%, rgba(11, 14, 20, 0.4) 100%), url(${featuredMovie.posterUrl}) center/cover no-repeat`,
-            border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-lg)',
           }}
         >
@@ -90,8 +104,8 @@ const HomePage = () => {
             style={{
               position: 'absolute',
               inset: 0,
-              backdropFilter: 'blur(28px)',
-              WebkitBackdropFilter: 'blur(28px)',
+              backdropFilter: 'blur(3px)',
+              WebkitBackdropFilter: 'blur(3px)',
               zIndex: 1,
             }}
           />

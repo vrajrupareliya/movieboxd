@@ -62,12 +62,11 @@ const Navbar = () => {
       }}
     >
       <div
-        className="app-container"
+        className="app-container navbar-inner"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '1.5rem',
         }}
       >
         {/* Brand Logo */}
@@ -82,6 +81,7 @@ const Navbar = () => {
             fontSize: '1.35rem',
             color: 'var(--text-primary)',
             letterSpacing: '-0.03em',
+            flexShrink: 0,
           }}
         >
           <div
@@ -166,6 +166,7 @@ const Navbar = () => {
         {/* Quick Search Bar */}
         <form
           onSubmit={handleSearchSubmit}
+          className="navbar-search"
           style={{
             flex: '1',
             maxWidth: '300px',
@@ -205,7 +206,7 @@ const Navbar = () => {
         </form>
 
         {/* Auth / Profile Area */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
           {isAuthenticated ? (
             <div ref={userMenuRef} style={{ position: 'relative' }}>
               <button
@@ -240,6 +241,7 @@ const Navbar = () => {
                   }}
                 />
                 <span
+                  className="navbar-username"
                   style={{
                     fontSize: '0.88rem',
                     fontWeight: 600,
@@ -336,13 +338,13 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Link to="/login">
+            <div className="navbar-auth-buttons" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Link to="/login" className="navbar-signin-link">
                 <Button variant="ghost" size="sm">
                   Sign In
                 </Button>
               </Link>
-              <Link to="/register">
+              <Link to="/register" className="navbar-join-link">
                 <Button variant="primary" size="sm">
                   Join
                 </Button>
