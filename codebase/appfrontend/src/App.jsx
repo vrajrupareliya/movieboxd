@@ -1,71 +1,97 @@
 import React from 'react';
-import { Routes, Route, Navigate, Link } from 'react-router-dom'; 
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-
-// Import Components
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Navbar';
+import MobileNav from './components/layout/MobileNav';
+import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Import Page Components
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import MovieDetailPage from './pages/MovieDetailPage'; 
-import UserProfilePage from './pages/UserProfilePage'; 
-import WatchlistPage from './pages/WatchlistPage'; 
-
-// We'll create these later
-// import FeedPage from './pages/FeedPage';
-// import DiaryPage from './pages/DiaryPage';
-// import UserSettingsPage from './pages/UserSettingsPage.jsx'; 
+import {
+  HomePage,
+  SearchPage,
+  MovieDetailPage,
+  UserProfilePage,
+  WatchlistPage,
+  DiaryPage,
+  FeedPage,
+  SettingsPage,
+  LoginPage,
+  RegisterPage,
+  NotFoundPage,
+} from './pages';
 
 function App() {
-  const { loading, isAuthenticated } = useAuth(); // Removed user from here as it's not needed for routing logic
-
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        Loading application...
-      </div>
-    );
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
-      <Navbar /> 
-      <main className="container" style={{ padding: '0 1rem', marginTop: '1rem', maxWidth: '1200px', margin: '1.5rem auto' }}>
+      <Navbar />
+      <main className="app-container main-content">
         <Routes>
-          {/* Public Routes */}
+          {/* Public Discovery Routes */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />} />
-          <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" replace />} />
-          <Route path="/movies/:movieId" element={<MovieDetailPage />} /> 
-          <Route path="/users/:userId" element={<UserProfilePage />} /> 
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/movies/:movieId" element={<MovieDetailPage />} />
+          <Route path="/users/:userId" element={<UserProfilePage />} />
 
+          {/* Authentication Routes */}
+          <Route
+            path="/login"
+            element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/register"
+            element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" replace />}
+          />
 
-          {/* Protected Routes */}
-          <Route 
-            path="/feed" 
-            element={<ProtectedRoute><div>Your Activity Feed (Protected)</div></ProtectedRoute>} 
+          {/* Protected Member Routes */}
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <FeedPage />
+              </ProtectedRoute>
+            }
           />
-          <Route 
-            path="/diary" 
-            element={<ProtectedRoute><div>Your Film Diary (Protected)</div></ProtectedRoute>} 
+          <Route
+            path="/diary"
+            element={
+              <ProtectedRoute>
+                <DiaryPage />
+              </ProtectedRoute>
+            }
           />
-          <Route 
-            path="/watchlist" 
-            element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} 
+          <Route
+            path="/watchlist"
+            element={
+              <ProtectedRoute>
+                <WatchlistPage />
+              </ProtectedRoute>
+            }
           />
-          <Route 
-            path="/profile/me" 
-            element={<ProtectedRoute><UserProfilePage /></ProtectedRoute>} 
+          <Route
+            path="/profile/me"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage />
+              </ProtectedRoute>
+            }
           />
-          {/* <Route path="/profile/me/edit" element={<ProtectedRoute><UserSettingsPage /></ProtectedRoute>} /> */}
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
 
-
-          <Route path="*" element={<div><h2>404 - Page Not Found</h2><Link to="/">Go Home</Link></div>} />
+          {/* 404 Catch-all */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      <Footer />
+      <MobileNav />
     </>
   );
 }
