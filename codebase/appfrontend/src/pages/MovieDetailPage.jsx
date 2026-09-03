@@ -1,283 +1,430 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
-import api from '../services/api';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Bookmark, Star, Calendar, User, Film, MessageSquarePlus, Share2 } from 'lucide-react';
+import { moviesApi, reviewsApi, watchlistApi } from '../api';
 import { useAuth } from '../context/AuthContext';
-import ReviewCard from '../components/ReviewCard'; 
+import { useToast } from '../context/ToastContext';
+import MoviePoster from '../components/movie/MoviePoster';
+import ReviewList from '../components/review/ReviewList';
+import ReviewComposerModal from '../components/review/ReviewComposerModal';
+import Button from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
+import StarRating from '../components/ui/StarRating';
+import Pagination from '../components/ui/Pagination';
+import { Skeleton } from '../components/ui/Skeleton';
 
-const StarRatingInput = ({ rating, setRating }) => {
-  const totalStars = 5;
-  return (
-    <div>
-      {[...Array(totalStars)].map((_, index) => {
-        const starValue = index + 1;
-        return (
-          <span
-            key={starValue}
-            style={{
-              cursor: 'pointer',
-              color: starValue <= rating ? 'orange' : 'lightgray',
-              fontSize: '1.8rem',
-              marginRight: '0.2rem'
-            }}
-            onClick={() => setRating(starValue)}
-          >
-            ★
-          </span>
-        );
-      })}
-    </div>
-  );
-};
-
-
-function MovieDetailPage() {
+const MovieDetailPage = () => {
   const { movieId } = useParams();
-  const { isAuthenticated, user } = useAuth();
+  const { user, isAuthenticated, updateUserLocally } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
-  const location = useLocation(); // For redirecting after login if trying to watchlist
+  const location = useLocation();
 
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loadingMovie, setLoadingMovie] = useState(true);
   const [loadingReviews, setLoadingReviews] = useState(true);
-  const [error, setError] = useState('');
-  
-  const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewRating, setReviewRating] = useState(0);
-  const [reviewComment, setReviewComment] = useState('');
-  const [reviewError, setReviewError] = useState('');
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalReviewsCount, setTotalReviewsCount] = useState(0);
 
-  const fetchMovieData = useCallback(async () => {
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [isUpdatingWatchlist, setIsUpdatingWatchlist] = useState(false);
+
+  // Fetch Movie Data
+  const fetchMovie = useCallback(async () => {
     setLoadingMovie(true);
     try {
-      const movieRes = await api.get(`/movies/${movieId}`);
-      setMovie(movieRes.data.data);
+      const data = await moviesApi.getById(movieId);
+      setMovie(data);
     } catch (err) {
-      console.error("Failed to fetch movie details:", err);
-      setError('Failed to load movie details.');
+      toast.error(err.message || 'Failed to load movie details.');
     } finally {
       setLoadingMovie(false);
     }
-  }, [movieId]);
+  }, [movieId, toast]);
 
-  const fetchReviews = useCallback(async () => {
-    setLoadingReviews(true);
-    try {
-      // *** UPDATED API CALL for fetching reviews for a movie ***
-      // Assuming backend route is /api/v1/reviews/getReviews?movieId=YOUR_MOVIE_ID
-      const reviewsRes = await api.get(`/movies/reviews/${movieId}/reviews`,
-
-        {
-          params: { movieId }
-      });
-   // ✅ Extract only the array
-    const reviewsArray = reviewsRes?.data?.data?.data;
-
-    // ✅ Correct check
-    if (!Array.isArray(reviewsArray)) {
-      console.error("Expected array, but got:", reviewsArray); // ✅ FIXED LINE
-      setReviews([]);
-      return;
-    }
-
-    // ✅ Sort and store
-    const sortedReviews = reviewsArray.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    setReviews(sortedReviews);
-  } catch (err) {
-    console.error("Failed to fetch reviews:", err.response?.data || err.message);
-  } finally {
-    setLoadingReviews(false);
-  }
-}, [movieId]);
+  // Fetch Reviews Data
+  const fetchReviews = useCallback(
+    async (page = 1) => {
+      setLoadingReviews(true);
+      try {
+        const res = await reviewsApi.getForMovie(movieId, page, 8);
+        setReviews(res.reviews || []);
+        setTotalPages(res.totalPages || 1);
+        setCurrentPage(res.currentPage || 1);
+        setTotalReviewsCount(res.totalCount || 0);
+      } catch {
+        // Handled silently; reviews remain empty or previous state
+      } finally {
+        setLoadingReviews(false);
+      }
+    },
+    [movieId]
+  );
 
   useEffect(() => {
-    fetchMovieData();
-    fetchReviews();
-  }, [fetchMovieData, fetchReviews]);
+    fetchMovie();
+    fetchReviews(1);
+  }, [fetchMovie, fetchReviews]);
+
+  // Watchlist status
+  const isInWatchlist =
+    user?.watchlist?.some((item) => (typeof item === 'string' ? item === movieId : item?._id === movieId)) || false;
+
+  // Check if current user already reviewed this movie
+  const userExistingReview = reviews.find(
+    (r) => r.user?._id === user?._id || r.user === user?._id
+  );
 
   const handleWatchlistToggle = async () => {
     if (!isAuthenticated) {
+      toast.info('Please sign in to add films to your watchlist.');
       navigate('/login', { state: { from: location } });
       return;
     }
-    const isInWatchlist = user?.watchlist?.some(item => item === movieId || item._id === movieId);
+
+    if (isUpdatingWatchlist) return;
+    setIsUpdatingWatchlist(true);
+
+    const previousWatchlist = user?.watchlist || [];
+    if (isInWatchlist) {
+      updateUserLocally((prev) => ({
+        ...prev,
+        watchlist: prev.watchlist.filter((item) =>
+          typeof item === 'string' ? item !== movieId : item?._id !== movieId
+        ),
+      }));
+    } else {
+      updateUserLocally((prev) => ({
+        ...prev,
+        watchlist: [...(prev.watchlist || []), movieId],
+      }));
+    }
+
     try {
       if (isInWatchlist) {
-        await api.delete(`/users/me/watchlist/${movieId}`);
-        alert(`${movie.title} removed from watchlist.`);
-        // TODO: Update user context more gracefully
+        await watchlistApi.remove(movieId);
       } else {
-        await api.post(`/users/me/watchlist/${movieId}`);
-        alert(`${movie.title} added to watchlist.`);
+        await watchlistApi.add(movieId);
       }
     } catch (err) {
-      console.error("Watchlist error:", err);
-      alert(`Error updating watchlist: ${err.response?.data?.error || err.message}`);
+      updateUserLocally((prev) => ({ ...prev, watchlist: previousWatchlist }));
+      toast.error(err.message || 'Failed to update watchlist.');
+    } finally {
+      setIsUpdatingWatchlist(false);
     }
   };
 
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    if (reviewRating === 0) {
-      setReviewError("Please select a rating.");
+  const handleOpenComposer = (reviewToEdit = null) => {
+    if (!isAuthenticated) {
+      toast.info('Please sign in to rate or review this film.');
+      navigate('/login', { state: { from: location } });
       return;
     }
-    setReviewError('');
-    setIsSubmittingReview(true);
-    try {
-      // *** UPDATED API CALL for submitting a review ***
-      // Assuming backend route is /api/v1/reviews/YOUR_MOVIE_ID/addReview
-      await api.post(`/movies/reviews/${movieId}/addReview`, {
-        rating: reviewRating,
-        comment: reviewComment,
-      });
-      setReviewComment('');
-      setReviewRating(0);
-      setShowReviewForm(false);
-      fetchReviews(); 
-      fetchMovieData(); 
-    } catch (err) {
-      console.error("Failed to submit review:", err.response?.data || err.message);
-      setReviewError(err.response?.data?.error || "Failed to submit review.");
-    } finally {
-      setIsSubmittingReview(false);
-    }
-  };
-  
-  const alreadyReviewed = reviews.some(review => review.user?._id === user?._id);
-
-
-  if (loadingMovie) return <div style={{ textAlign: 'center', marginTop: '3rem' }}>Loading movie details...</div>;
-  if (error) return <div style={{ color: 'red', textAlign: 'center', marginTop: '3rem'  }}>{error}</div>;
-  if (!movie) return <div style={{ textAlign: 'center', marginTop: '3rem' }}>Movie not found.</div>;
-
-  const detailPageStyle = {
-    display: 'flex',
-    flexDirection: 'column', 
-    gap: '2rem',
-    maxWidth: '900px',
-    margin: '0 auto',
-  };
-  const movieInfoStyle = {
-    display: 'flex',
-    gap: '2rem',
-    alignItems: 'flex-start', 
-  };
-  const posterStyle = {
-    width: '300px',
-    height: 'auto', 
-    maxHeight: '450px',
-    objectFit: 'cover',
-    borderRadius: '8px',
-    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-  };
-  const textInfoStyle = {
-    flex: 1, 
-  };
-  const actionsStyle = {
-    marginTop: '1rem',
-    display: 'flex',
-    gap: '1rem',
-  };
-  const buttonStyle = {
-    padding: '0.75rem 1.5rem',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontWeight: 'bold',
+    setEditingReview(reviewToEdit);
+    setIsComposerOpen(true);
   };
 
+  const handleReviewSuccess = () => {
+    fetchReviews(1);
+    fetchMovie(); // Refresh average rating and reviewCount on movie document
+  };
+
+  const handleReviewDeleted = (deletedId) => {
+    setReviews((prev) => prev.filter((r) => r._id !== deletedId));
+    fetchMovie();
+  };
+
+  if (loadingMovie) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <Skeleton height="320px" borderRadius="var(--radius-lg)" />
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <Skeleton width="240px" height="360px" />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <Skeleton height="36px" width="60%" />
+            <Skeleton height="20px" width="40%" />
+            <Skeleton height="100px" width="100%" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!movie) {
+    return (
+      <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+        <h2>Film Not Found</h2>
+        <p style={{ margin: '1rem 0' }}>We couldn't find the requested film.</p>
+        <Link to="/">
+          <Button variant="primary">Return to Catalog</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div style={detailPageStyle}>
-      <div style={movieInfoStyle}>
-        <img 
-            src={movie.posterUrl || `https://placehold.co/300x450/ccc/FFFFFF?text=${encodeURIComponent(movie.title)}`} 
-            alt={movie.title} 
-            style={posterStyle}
-            onError={(e) => { e.target.onerror = null; e.target.src=`https://placehold.co/300x450/ccc/FFFFFF?text=${encodeURIComponent(movie.title)}`; }}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+      {/* Movie Hero Presentation Banner */}
+      <section
+        style={{
+          position: 'relative',
+          borderRadius: 'var(--radius-lg)',
+          overflow: 'hidden',
+          background: `linear-gradient(to top, rgba(11, 14, 20, 1) 0%, rgba(16, 20, 29, 0.8) 50%, rgba(16, 20, 29, 0.4) 100%), url(${movie.posterUrl}) center/cover no-repeat`,
+          border: '1px solid var(--border-subtle)',
+          padding: 'clamp(1.5rem, 4vw, 3rem)',
+          boxShadow: 'var(--shadow-lg)',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backdropFilter: 'blur(32px)',
+            WebkitBackdropFilter: 'blur(32px)',
+            zIndex: 1,
+          }}
         />
-        <div style={textInfoStyle}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{movie.title} ({movie.releaseYear})</h1>
-          {movie.averageRating > 0 && (
-             <p style={{ fontSize: '1.2rem', color: 'orange', marginBottom: '0.5rem' }}>
-                ⭐ {movie.averageRating.toFixed(1)}/5 ({movie.reviewCount} reviews)
-             </p>
-          )}
-          <p style={{ marginBottom: '0.5rem' }}><strong>Director:</strong> {movie.director}</p>
-          <p style={{ marginBottom: '0.5rem' }}><strong>Genres:</strong> {movie.genres?.join(', ')}</p>
-          <p style={{ marginBottom: '1rem', lineHeight: '1.6' }}><strong>Synopsis:</strong> {movie.synopsis}</p>
-          {movie.cast && movie.cast.length > 0 && (
-            <p style={{ marginBottom: '1rem' }}><strong>Cast:</strong> {movie.cast.join(', ')}</p>
-          )}
 
-          {isAuthenticated && (
-            <div style={actionsStyle}>
-              <button 
-                onClick={handleWatchlistToggle} 
-                style={{...buttonStyle, backgroundColor: '#007bff', color: 'white'}}
-              >
-                {user?.watchlist?.some(item => item === movieId || item._id === movieId) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-              </button>
-              {!alreadyReviewed && (
-                 <button 
-                    onClick={() => setShowReviewForm(!showReviewForm)}
-                    style={{...buttonStyle, backgroundColor: '#28a745', color: 'white'}}
-                 >
-                    {showReviewForm ? 'Cancel Review' : 'Write a Review'}
-                 </button>
-              )}
-               {alreadyReviewed && (
-                <p style={{alignSelf: 'center', color: 'green'}}>You've reviewed this film!</p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {isAuthenticated && showReviewForm && !alreadyReviewed && (
-        <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-          <h3>Write Your Review</h3>
-          {reviewError && <p style={{ color: 'red' }}>{reviewError}</p>}
-          <form onSubmit={handleReviewSubmit}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label>Rating:</label>
-              <StarRatingInput rating={reviewRating} setRating={setReviewRating} />
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="comment">Comment:</label>
-              <textarea
-                id="comment"
-                value={reviewComment}
-                onChange={(e) => setReviewComment(e.target.value)}
-                rows="4"
-                style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', marginTop: '0.25rem' }}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2rem',
+          }}
+        >
+          {/* Main Flex layout: Poster + Film Information */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 'clamp(1.5rem, 3vw, 2.5rem)',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+            }}
+          >
+            {/* Poster Card */}
+            <div style={{ width: '220px', flexShrink: 0 }} className="poster-col">
+              <MoviePoster
+                src={movie.posterUrl}
+                alt={movie.title}
+                fallbackTitle={movie.title}
+                borderRadius="var(--radius-md)"
+                style={{ boxShadow: 'var(--shadow-poster)' }}
               />
             </div>
-            <button type="submit" disabled={isSubmittingReview} style={{...buttonStyle, backgroundColor: '#17a2b8', color: 'white'}}>
-              {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-            </button>
-          </form>
-        </div>
-      )}
 
-      <div className="reviews-section" style={{ marginTop: '2rem' }}>
-        <h2>Reviews</h2>
-        {loadingReviews && <p>Loading reviews...</p>}
-        {!loadingReviews && reviews.length === 0 && <p>No reviews yet. Be the first!</p>}
-        {!loadingReviews && reviews.length > 0 && (
-          <div>
-            {reviews.map(review => (
-              <ReviewCard key={review._id} review={review} />
-            ))}
+            {/* Info Column */}
+            <div style={{ flex: '1', minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Genre Pills */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {movie.genres?.map((genre) => (
+                  <Badge key={genre} variant="default" size="md">
+                    {genre}
+                  </Badge>
+                ))}
+              </div>
+
+              {/* Title & Release Year */}
+              <div>
+                <h1
+                  style={{
+                    fontSize: 'clamp(1.8rem, 4vw, 2.75rem)',
+                    fontWeight: 800,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {movie.title}
+                </h1>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    marginTop: '0.5rem',
+                    fontSize: '0.95rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  {movie.releaseYear && <span>{movie.releaseYear}</span>}
+                  {movie.director && (
+                    <span>
+                      Directed by <strong style={{ color: 'var(--text-primary)' }}>{movie.director}</strong>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Community Rating Bar */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-subtle)',
+                  width: 'fit-content',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Star size={24} fill="var(--accent-gold)" color="var(--accent-gold)" />
+                  <span style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+                    {movie.averageRating > 0 ? Number(movie.averageRating).toFixed(1) : '-'}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>/ 5</span>
+                </div>
+                <div style={{ width: '1px', height: '24px', background: 'var(--border-subtle)' }} />
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <strong>{movie.reviewCount || 0}</strong> {movie.reviewCount === 1 ? 'review' : 'reviews'}
+                </span>
+              </div>
+
+              {/* Synopsis */}
+              {movie.synopsis && (
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                    Synopsis
+                  </h4>
+                  <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+                    {movie.synopsis}
+                  </p>
+                </div>
+              )}
+
+              {/* Cast */}
+              {movie.cast && movie.cast.length > 0 && (
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                    Starring
+                  </h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {movie.cast.map((actor) => (
+                      <Badge key={actor} variant="default" size="sm">
+                        {actor}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons Toolbar */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  flexWrap: 'wrap',
+                  marginTop: '0.5rem',
+                }}
+              >
+                <Button
+                  variant={isInWatchlist ? 'primary' : 'secondary'}
+                  size="md"
+                  onClick={handleWatchlistToggle}
+                  isLoading={isUpdatingWatchlist}
+                  leftIcon={<Bookmark size={18} fill={isInWatchlist ? 'currentColor' : 'none'} />}
+                >
+                  {isInWatchlist ? 'In Watchlist' : 'Add to Watchlist'}
+                </Button>
+
+                {userExistingReview ? (
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={() => handleOpenComposer(userExistingReview)}
+                    leftIcon={<Star size={18} fill="var(--accent-gold)" color="var(--accent-gold)" />}
+                  >
+                    Edit Your Review ({userExistingReview.rating}★)
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={() => handleOpenComposer()}
+                    leftIcon={<MessageSquarePlus size={18} />}
+                  >
+                    Log / Review Film
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
+
+      {/* Community Reviews Section */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid var(--border-subtle)',
+            paddingBottom: '0.85rem',
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                color: 'var(--accent-green)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                display: 'block',
+                marginBottom: '0.2rem',
+              }}
+            >
+              Member Opinions
+            </span>
+            <h2 style={{ fontSize: '1.4rem' }}>
+              Reviews ({totalReviewsCount})
+            </h2>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleOpenComposer()}
+            leftIcon={<MessageSquarePlus size={16} />}
+          >
+            {userExistingReview ? 'Edit Review' : 'Add Review'}
+          </Button>
+        </div>
+
+        {/* Reviews List */}
+        <ReviewList
+          reviews={reviews}
+          isLoading={loadingReviews}
+          onReviewDeleted={handleReviewDeleted}
+          onEditClick={(r) => handleOpenComposer(r)}
+          onWriteReviewClick={() => handleOpenComposer()}
+        />
+
+        {/* Reviews Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => fetchReviews(page)}
+        />
+      </section>
+
+      {/* Review Composer Modal */}
+      <ReviewComposerModal
+        isOpen={isComposerOpen}
+        onClose={() => setIsComposerOpen(false)}
+        movie={movie}
+        initialReview={editingReview}
+        onSuccess={handleReviewSuccess}
+      />
     </div>
   );
-}
+};
 
 export default MovieDetailPage;

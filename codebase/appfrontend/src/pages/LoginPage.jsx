@@ -1,78 +1,149 @@
 import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Film, User, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
 
-function LoginPage() {
-  const [username, setUsername] = useState(''); // Added username state
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/"; // For redirecting after login
+
+  const from = location.state?.from?.pathname || '/';
+
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!identifier.trim() || !password) {
+      setError('Please enter your username or email, and password.');
+      return;
+    }
     setError('');
+    setIsLoading(true);
+
     try {
-      // Login function in AuthContext currently only uses email and password.
-      // If your backend supports login with username OR email, you'd adjust AuthContext.
-      await login(email, password); 
-      navigate(from, { replace: true }); // Redirect to previous page or homepage
+      await login(identifier.trim(), password);
+      navigate(from, { replace: true });
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
-      console.error('Login error:', err);
+      setError(err.message || 'Invalid credentials. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
-      {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        {/* Username field - for UI, not currently used in login logic by AuthContext */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="username" style={{ display: 'block', marginBottom: '0.25rem' }}>Username:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px' }}
-          />
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '70vh',
+        padding: '1rem',
+      }}
+    >
+      <div
+        className="card-surface animate-fade-in"
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          padding: '2.5rem 2rem',
+          background: 'var(--bg-elevated)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-lg)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.75rem',
+        }}
+      >
+        {/* Brand Header */}
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: 'var(--radius-md)',
+              background: 'linear-gradient(135deg, #00e054, #00b040)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#07160d',
+              boxShadow: '0 4px 14px var(--accent-green-glow)',
+              marginBottom: '0.25rem',
+            }}
+          >
+            <Film size={24} strokeWidth={2.5} />
+          </div>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Welcome Back</h1>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+            Sign in to track films, write reviews, and share with friends.
+          </p>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: '0.25rem' }}>Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+
+        {/* Error Alert */}
+        {error && (
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              background: 'var(--accent-danger-subtle)',
+              border: '1px solid var(--accent-danger)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--accent-danger)',
+              fontSize: '0.85rem',
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <Input
+            label="Username or Email"
+            placeholder="cinephile / user@example.com"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px' }}
+            leftIcon={<User size={16} />}
           />
-        </div>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '0.25rem' }}>Password:</label>
-          <input
+
+          <Input
+            label="Password"
             type="password"
-            id="password"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px' }}
+            leftIcon={<Lock size={16} />}
           />
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            isLoading={isLoading}
+            rightIcon={<ArrowRight size={18} />}
+            style={{ width: '100%', marginTop: '0.5rem' }}
+          >
+            Sign In
+          </Button>
+        </form>
+
+        {/* Footer Link */}
+        <div style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+          Don't have an account?{' '}
+          <Link to="/register" style={{ color: 'var(--accent-green)', fontWeight: 600 }}>
+            Create one free
+          </Link>
         </div>
-        <button type="submit" style={{ width: '100%', padding: '0.75rem 1.5rem', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' }}>
-          Login
-        </button>
-      </form>
-      <p style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-        Don't have an account? <Link to="/register" style={{ color: '#007bff' }}>Register here</Link>
-      </p>
+      </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

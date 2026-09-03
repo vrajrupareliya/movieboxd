@@ -1,72 +1,131 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import api from '../services/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Bookmark, ArrowUpDown } from 'lucide-react';
+import { watchlistApi } from '../api';
 import { useAuth } from '../context/AuthContext';
-import { MovieCard } from './HomePage'; // Assuming MovieCard is exported from HomePage or its own file
-import { Link } from 'react-router-dom';
+import { useToast } from '../context/ToastContext';
+import MovieGrid from '../components/movie/MovieGrid';
 
-function WatchlistPage() {
+const WatchlistPage = () => {
+  const { user, updateUserLocally } = useAuth();
+  const toast = useToast();
+
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const { user, updateUserContext } = useAuth(); // Get user and method to update context
+  const [sortBy, setSortBy] = useState('recent');
 
   const fetchWatchlist = useCallback(async () => {
-    if (!user) { // Ensure user is loaded before fetching watchlist
-      setLoading(false);
-      return;
-    }
     setLoading(true);
-    setError('');
     try {
-      const response = await api.get('/users/me/watchlist');
-      setWatchlist(response.data.data || []);
+      const data = await watchlistApi.getWatchlist();
+      setWatchlist(data || []);
     } catch (err) {
-      console.error("Failed to fetch watchlist:", err);
-      setError('Failed to load watchlist. Please try again later.');
+      toast.error(err.message || 'Failed to load watchlist.');
     } finally {
       setLoading(false);
     }
-  }, [user]); // Depend on user object
+  }, [toast]);
 
   useEffect(() => {
     fetchWatchlist();
   }, [fetchWatchlist]);
 
-  const handleRemoveFromWatchlist = async (movieIdToRemove) => {
+  const handleRemove = async (movieId) => {
+    // Optimistic remove
+    setWatchlist((prev) => prev.filter((m) => m._id !== movieId));
+    updateUserLocally((prev) => ({
+      ...prev,
+      watchlist: (prev.watchlist || []).filter((item) =>
+        typeof item === 'string' ? item !== movieId : item?._id !== movieId
+      ),
+    }));
+
     try {
-      await api.delete(`/users/me/watchlist/${movieIdToRemove}`);
-      setWatchlist(prevWatchlist => prevWatchlist.filter(movie => movie._id !== movieIdToRemove));
-      await updateUserContext(); // Refresh user context to update watchlist array in AuthContext
-      alert('Movie removed from watchlist.');
+      await watchlistApi.remove(movieId);
     } catch (err) {
-      console.error("Failed to remove from watchlist:", err);
-      alert(`Error removing from watchlist: ${err.response?.data?.error || err.message}`);
+      toast.error(err.message || 'Failed to remove from watchlist.');
+      fetchWatchlist(); // rollback
     }
   };
 
-  if (loading && !user) return <div style={{ textAlign: 'center', marginTop: '3rem' }}>Loading user data...</div>;
-  if (loading) return <div style={{ textAlign: 'center', marginTop: '3rem' }}>Loading watchlist...</div>;
-  if (error) return <div style={{ color: 'red', textAlign: 'center', marginTop: '3rem' }}>{error}</div>;
+  const sortedWatchlist = [...watchlist].sort((a, b) => {
+    if (sortBy === 'rating') return (b.averageRating || 0) - (a.averageRating || 0);
+    if (sortBy === 'year') return (b.releaseYear || 0) - (a.releaseYear || 0);
+    if (sortBy === 'title') return (a.title || '').localeCompare(b.title || '');
+    return 0; // Default order
+  });
 
   return (
-    <div>
-      <h1 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>My Watchlist</h1>
-      {watchlist.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {watchlist.map(movie => (
-            <MovieCard 
-              key={movie._id} 
-              movie={movie} 
-              onRemoveFromWatchlist={handleRemoveFromWatchlist}
-              showRemoveButton={true}
-            />
-          ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Header and Controls */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+          borderBottom: '1px solid var(--border-subtle)',
+          paddingBottom: '1rem',
+        }}
+      >
+        <div>
+          <span
+            style={{
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              color: 'var(--accent-green)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              display: 'block',
+              marginBottom: '0.2rem',
+            }}
+          >
+            My Library
+          </span>
+          <h1 style={{ fontSize: '2rem' }}>Watchlist</h1>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+            {watchlist.length} {watchlist.length === 1 ? 'film you want to see' : 'films you want to see'}
+          </p>
         </div>
-      ) : (
-        <p style={{ textAlign: 'center' }}>Your watchlist is empty. <Link to="/">Browse movies</Link> to add some!</p>
-      )}
+
+        {/* Sort Controls */}
+        {watchlist.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <ArrowUpDown size={15} color="var(--text-muted)" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{
+                background: 'var(--bg-elevated)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.45rem 0.75rem',
+                fontSize: '0.85rem',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="recent">Recently Added</option>
+              <option value="rating">Highest Rated</option>
+              <option value="year">Release Year</option>
+              <option value="title">Film Title (A-Z)</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Watchlist Movie Grid */}
+      <MovieGrid
+        movies={sortedWatchlist}
+        isLoading={loading}
+        showRemoveButton={true}
+        onRemoveFromWatchlist={handleRemove}
+        emptyTitle="Your watchlist is empty"
+        emptyDescription="Explore our catalog of films and click the bookmark icon to start curating your watchlist."
+      />
     </div>
   );
-}
+};
 
 export default WatchlistPage;

@@ -1,102 +1,126 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '../services/api'; // Your centralized Axios instance
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import { authApi } from '../api';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true); // To check initial auth status
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const verifyUser = async () => {
-      const storedToken = localStorage.getItem('token'); // Re-check token from storage
-      if (storedToken && storedToken !== 'undefined') { // Ensure token is not the string "undefined"
-        setToken(storedToken); 
-        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        try {
-          const response = await api.get('/users/me/profile'); 
-          setUser(response.data.data);
-        } catch (error) {
-          console.error("Failed to verify token or fetch user", error.response?.data || error.message);
-          localStorage.removeItem('token');
-          setToken(null);
-          setUser(null);
-          delete api.defaults.headers.common['Authorization'];
-        }
-      } else {
-        // No token in storage or token is "undefined", ensure state is cleared
-        if (storedToken === 'undefined') localStorage.removeItem('token'); // Clean up "undefined" string
+  // Restore authenticated session on app mount
+  const verifySession = useCallback(async () => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
+      setToken(storedToken);
+      try {
+        const userData = await authApi.getMe();
+        setUser(userData);
+      } catch (error) {
+        console.warn('Session restoration failed:', error.message);
+        localStorage.removeItem('token');
         setToken(null);
         setUser(null);
-        delete api.defaults.headers.common['Authorization'];
       }
-      setLoading(false);
-    };
-    verifyUser();
-  }, []); 
+    } else {
+      localStorage.removeItem('token');
+      setToken(null);
+      setUser(null);
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    if (token && token !== 'undefined') {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    verifySession();
+  }, [verifySession]);
+
+  /**
+   * Log in user with username/email and password
+   */
+  const login = async (identifier, password) => {
+    const isEmail = identifier.includes('@');
+    const payload = isEmail
+      ? { email: identifier, password }
+      : { username: identifier, password };
+
+    const data = await authApi.login(payload);
+    const accessToken = data?.accessToken;
+    const userData = data?.user;
+
+    if (!accessToken) {
+      throw new Error('Access token was not returned by server.');
+    }
+
+    localStorage.setItem('token', accessToken);
+    setToken(accessToken);
+
+    if (userData && userData._id) {
+      setUser(userData);
     } else {
-      delete api.defaults.headers.common['Authorization'];
+      const profile = await authApi.getMe();
+      setUser(profile);
     }
-  }, [token]);
-
-
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/users/login', { email, password });
-      console.log("Backend login response:", response.data); // For debugging
-
-      // *** THE FIX IS HERE ***
-      // Assuming the token and user are nested within response.data.data
-      // Adjust if your backend structure is different (e.g., response.data.token directly)
-      const tokenFromData = response.data?.data?.accessToken; 
-      const userDataFromData = response.data?.data?.user;
-
-      console.log("Received token from backend:", tokenFromData); // For debugging
-
-      if (!tokenFromData) {
-        console.error("Token not found in backend response. Response structure:", response.data);
-        throw new Error("Token not received from server.");
-      }
-      
-      localStorage.setItem('token', tokenFromData);
-      setToken(tokenFromData); 
-
-      if (userDataFromData && userDataFromData._id) { 
-          setUser(userDataFromData);
-      } else {
-          const profileResponse = await api.get('/users/me/profile');
-          setUser(profileResponse.data.data);
-      }
-      return true; 
-    } catch (error) {
-      console.error("Login failed in AuthContext:", error.response?.data || error.message);
-      throw error; 
-    }
+    return userData;
   };
 
-  const register = async (username, email, password) => {
-    try {
-      await api.post('/users/register', { username, email, password });
-      return true; 
-    } catch (error) {
-      console.error("Registration failed", error.response?.data || error.message);
-      throw error;
-    }
+  /**
+   * Register a new user
+   */
+  const register = async ({ username, email, password }) => {
+    const response = await authApi.register({ username, email, password });
+    return response;
   };
 
-  const logout = () => {
+  /**
+   * Log out user
+   */
+  const logout = async () => {
+    await authApi.logout();
     localStorage.removeItem('token');
-    setToken(null); 
+    setToken(null);
     setUser(null);
   };
 
+  /**
+   * Refetch current user from backend
+   */
+  const refreshUser = async () => {
+    try {
+      const userData = await authApi.getMe();
+      setUser(userData);
+      return userData;
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Optimistically update user object in memory (e.g., watchlist toggle, bio edit)
+   */
+  const updateUserLocally = (updater) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      if (typeof updater === 'function') {
+        return updater(prev);
+      }
+      return { ...prev, ...updater };
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        isAuthenticated: !!user && !!token,
+        login,
+        register,
+        logout,
+        refreshUser,
+        updateUserLocally,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -104,8 +128,10 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) { 
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
+
+export default AuthContext;

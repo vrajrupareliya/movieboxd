@@ -1,0 +1,11 @@
+export { default as HomePage } from './HomePage';
+export { default as SearchPage } from './SearchPage';
+export { default as MovieDetailPage } from './MovieDetailPage';
+export { default as UserProfilePage } from './UserProfilePage';
+export { default as WatchlistPage } from './WatchlistPage';
+export { default as DiaryPage } from './DiaryPage';
+export { default as FeedPage } from './FeedPage';
+export { default as SettingsPage } from './SettingsPage';
+export { default as LoginPage } from './LoginPage';
+export { default as RegisterPage } from './RegisterPage';
+export { default as NotFoundPage } from './NotFoundPage';
