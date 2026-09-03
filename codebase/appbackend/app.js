@@ -12,10 +12,20 @@ const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.tri
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
+
+        let hostname = '';
+        try {
+            hostname = new URL(origin).hostname;
+        } catch (e) {
+            hostname = '';
+        }
+
         if (
             allowedOrigins.includes(origin) ||
             /^http:\/\/localhost(:\d+)?$/.test(origin) ||
-            /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
+            /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin) ||
+            hostname.endsWith('.vercel.app') ||
+            hostname === 'vercel.app'
         ) {
             return callback(null, true);
         }
@@ -28,6 +38,14 @@ app.use(express.json({limit: "20kb"}))
 app.use(express.urlencoded({extended: true, limit:"16kb"}))
 
 app.use(express.static("public"))
+
+// Health check / root endpoint
+app.get("/", (req, res) => {
+    res.status(200).json({
+        status: "success",
+        message: "Movieboxd API is running healthy 🚀"
+    });
+});
 
 // import userroutes
 import userRouter from "./routes/user.routes.js";

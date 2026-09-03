@@ -136,7 +136,8 @@ const validpassword = await user.isPasswordCorrect(password)
 
   const options = {
     httpOnly: true,
-    secure: true
+    secure: true,
+    sameSite: "none"
   }
   return res
   .status(200)  
@@ -165,7 +166,8 @@ const logoutUser = asynchandler(async(req, res) => {
     )
     const options = {
       httpOnly: true,
-      secure: true
+      secure: true,
+      sameSite: "none"
     }
     return res
   .status(200)  
