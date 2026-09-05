@@ -22,17 +22,18 @@ const NotFoundPage = () => {
           width: '72px',
           height: '72px',
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.04)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'var(--accent-green)',
+          color: 'var(--accent-primary)',
         }}
       >
         <Film size={36} />
       </div>
 
-      <h1 style={{ fontSize: '3rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>404</h1>
+      <h1 style={{ fontSize: '3.2rem', fontWeight: 600, fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>404</h1>
       <h2 style={{ fontSize: '1.4rem' }}>Film or Page Not Found</h2>
       <p style={{ maxWidth: '440px', color: 'var(--text-secondary)' }}>
         The reel seems to have run out. The page you are looking for might have been moved, renamed, or doesn't exist.

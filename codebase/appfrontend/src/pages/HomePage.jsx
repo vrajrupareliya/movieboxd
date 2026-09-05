@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Film, Sparkles, TrendingUp, Bookmark, Star, ArrowRight } from 'lucide-react';
 import { moviesApi, socialApi } from '../api';
 import { useAuth } from '../context/AuthContext';
 import MovieRow from '../components/movie/MovieRow';
@@ -11,13 +10,12 @@ import Badge from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
 
 const HomePage = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [popularMovies, setPopularMovies] = useState([]);
   const [featuredMovie, setFeaturedMovie] = useState(null);
   const [feedItems, setFeedItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [feedLoading, setFeedLoading] = useState(false);
 
   useEffect(() => {
     const loadHomeData = async () => {
@@ -26,7 +24,6 @@ const HomePage = () => {
         const movies = await moviesApi.getPopular();
         setPopularMovies(movies);
         if (movies.length > 0) {
-          // Pick the first as spotlight or highest rated
           setFeaturedMovie(movies[0]);
         }
       } catch {
@@ -42,14 +39,11 @@ const HomePage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       const loadFeed = async () => {
-        setFeedLoading(true);
         try {
           const res = await socialApi.getFeed(1, 4);
           setFeedItems(res.items || []);
         } catch {
           // Feed might be empty if user doesn't follow anyone yet
-        } finally {
-          setFeedLoading(false);
         }
       };
       loadFeed();
@@ -57,13 +51,13 @@ const HomePage = () => {
   }, [isAuthenticated]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-      {/* Featured Hero Banner */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
+      {/* Featured Hero Banner - Crisp Archival Monograph Presentation */}
       {loading ? (
         <div
           style={{
             height: '420px',
-            borderRadius: 'var(--radius-lg)',
+            borderRadius: 'var(--radius-card)',
             overflow: 'hidden',
           }}
         >
@@ -74,27 +68,16 @@ const HomePage = () => {
           className="hero-spotlight animate-fade-in"
           style={{
             position: 'relative',
-            borderRadius: 'var(--radius-lg)',
+            borderRadius: 'var(--radius-card)',
             overflow: 'hidden',
             minHeight: '420px',
             display: 'flex',
             alignItems: 'flex-end',
             padding: 'clamp(1.5rem, 4vw, 3rem)',
-            background: `linear-gradient(to top, rgba(11, 14, 20, 0.98) 0%, rgba(11, 14, 20, 0.7) 50%, rgba(11, 14, 20, 0.4) 100%), url(${featuredMovie.posterUrl}) center/cover no-repeat`,
-            boxShadow: 'var(--shadow-lg)',
+            background: `linear-gradient(to top, rgba(10, 10, 10, 0.98) 0%, rgba(10, 10, 10, 0.75) 45%, rgba(10, 10, 10, 0.3) 100%), url(${featuredMovie.posterUrl}) center/cover no-repeat`,
+            boxShadow: 'var(--shadow-md)',
           }}
         >
-          {/* Subtle Ambient Backing Glow */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              backdropFilter: 'blur(3px)',
-              WebkitBackdropFilter: 'blur(3px)',
-              zIndex: 1,
-            }}
-          />
-
           <div
             style={{
               position: 'relative',
@@ -105,8 +88,8 @@ const HomePage = () => {
               maxWidth: '720px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-              <Badge variant="green" size="md">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <Badge variant="accent" size="md">
                 Featured Film
               </Badge>
               {featuredMovie.releaseYear && (
@@ -124,9 +107,10 @@ const HomePage = () => {
             <h1
               style={{
                 fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-                lineHeight: 1.05,
-                fontWeight: 800,
+                lineHeight: 1.06,
+                fontWeight: 600,
                 color: 'var(--text-primary)',
+                letterSpacing: '-0.025em',
               }}
             >
               {featuredMovie.title}
@@ -135,22 +119,23 @@ const HomePage = () => {
             {featuredMovie.synopsis && (
               <p
                 style={{
-                  fontSize: '1rem',
+                  fontSize: '0.95rem',
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
                   display: '-webkit-box',
                   WebkitLineClamp: 3,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
+                  maxWidth: '65ch',
                 }}
               >
                 {featuredMovie.synopsis}
               </p>
             )}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
               <Link to={`/movies/${featuredMovie._id}`}>
-                <Button variant="primary" size="lg" rightIcon={<ArrowRight size={18} />}>
+                <Button variant="primary" size="lg">
                   View Film Details
                 </Button>
               </Link>
@@ -169,7 +154,7 @@ const HomePage = () => {
       {/* Popular Films Carousel Rail */}
       <MovieRow
         title="Popular on Movieboxd"
-        subtitle="Trending Films"
+        subtitle="Recent films receiving wide appreciation"
         movies={popularMovies}
         isLoading={loading}
         viewAllLink="/search"
@@ -178,25 +163,33 @@ const HomePage = () => {
       {/* Social Activity Feed Preview (if logged in) */}
       {isAuthenticated && feedItems.length > 0 && (
         <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--border-subtle)',
+              paddingBottom: '0.65rem',
+            }}
+          >
             <div>
-              <span
-                style={{
-                  fontSize: '0.78rem',
-                  fontWeight: 600,
-                  color: 'var(--accent-green)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  display: 'block',
-                  marginBottom: '0.2rem',
-                }}
-              >
-                Community
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 600 }}>Friend Activity</h2>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                Recent reviews and ratings from members you follow
               </span>
-              <h2 style={{ fontSize: '1.4rem' }}>Friend Activity</h2>
             </div>
-            <Link to="/feed" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-              View full feed →
+            <Link
+              to="/feed"
+              style={{
+                fontSize: '0.82rem',
+                fontWeight: 500,
+                color: 'var(--text-muted)',
+                transition: 'color var(--duration-fast)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+            >
+              View full feed
             </Link>
           </div>
 
@@ -216,23 +209,16 @@ const HomePage = () => {
 
       {/* All Available Movies Grid Section */}
       <section style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <span
-              style={{
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                color: 'var(--accent-green)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                display: 'block',
-                marginBottom: '0.2rem',
-              }}
-            >
-              Browse Catalog
-            </span>
-            <h2 style={{ fontSize: '1.4rem' }}>Discover All Films</h2>
-          </div>
+        <div
+          style={{
+            borderBottom: '1px solid var(--border-subtle)',
+            paddingBottom: '0.65rem',
+          }}
+        >
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 600 }}>Discover All Films</h2>
+          <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            Explore the complete archive of catalogued cinema
+          </span>
         </div>
 
         <div className="movie-grid">

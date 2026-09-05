@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Textarea from '../components/ui/Textarea';
+import Avatar from '../components/ui/Avatar';
 
 const SettingsPage = () => {
   const { user, refreshUser } = useAuth();
@@ -64,19 +65,6 @@ const SettingsPage = () => {
         >
           Back
         </Button>
-        <span
-          style={{
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            color: 'var(--accent-green)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            display: 'block',
-            marginBottom: '0.2rem',
-          }}
-        >
-          Account Preferences
-        </span>
         <h1 style={{ fontSize: '2rem' }}>Edit Profile</h1>
       </div>
 
@@ -86,8 +74,8 @@ const SettingsPage = () => {
         className="card-surface"
         style={{
           padding: '2rem',
-          background: 'var(--bg-elevated)',
-          borderRadius: 'var(--radius-lg)',
+          background: 'var(--bg-surface)',
+          borderRadius: 'var(--radius-card)',
           display: 'flex',
           flexDirection: 'column',
           gap: '1.5rem',
@@ -95,22 +83,14 @@ const SettingsPage = () => {
       >
         {/* Live Avatar Preview */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <img
-            src={
-              profilePictureUrl ||
-              `https://placehold.co/100x100/171d27/00e054?text=${username?.charAt(0).toUpperCase() || 'U'}`
-            }
-            alt="Avatar Preview"
+          <Avatar
+            src={profilePictureUrl}
+            name={username || 'User'}
+            size={68}
+            fontSize="1.5rem"
             style={{
-              width: '68px',
-              height: '68px',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              border: '2px solid var(--accent-green)',
-            }}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = `https://placehold.co/100x100/171d27/00e054?text=${username?.charAt(0).toUpperCase() || 'U'}`;
+              border: '2px solid var(--border-medium)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           />
           <div style={{ flex: 1 }}>
@@ -167,7 +147,7 @@ const SettingsPage = () => {
           <Button variant="ghost" size="md" onClick={() => navigate(-1)} disabled={isSaving}>
             Cancel
           </Button>
-          <Button type="submit" variant="primary" size="md" isLoading={isSaving} leftIcon={<Save size={16} />}>
+          <Button type="submit" variant="primary" size="md" isLoading={isSaving}>
             Save Profile
           </Button>
         </div>

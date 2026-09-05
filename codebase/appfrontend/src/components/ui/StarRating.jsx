@@ -14,12 +14,12 @@ const StarRating = ({
   const [hoverRating, setHoverRating] = useState(0);
 
   const starSizes = {
-    sm: 14,
-    md: 18,
-    lg: 24,
-    xl: 32,
+    sm: 13,
+    md: 16,
+    lg: 22,
+    xl: 28,
   };
-  const pixelSize = starSizes[size] || 18;
+  const pixelSize = starSizes[size] || 16;
 
   const activeScore = hoverRating > 0 ? hoverRating : rating;
 
@@ -49,13 +49,26 @@ const StarRating = ({
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '0.2rem',
+        gap: '0.15rem',
         userSelect: 'none',
         ...style,
       }}
       role={readOnly ? 'img' : 'radiogroup'}
       aria-label={`Rating: ${rating} out of ${maxStars} stars`}
     >
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <defs>
+          <linearGradient id="half-amber" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="50%" stopColor="var(--accent-primary)" />
+            <stop offset="50%" stopColor="transparent" stopOpacity="1" />
+          </linearGradient>
+          <linearGradient id="half-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="50%" stopColor="var(--accent-primary)" />
+            <stop offset="50%" stopColor="transparent" stopOpacity="1" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       {[...Array(maxStars)].map((_, i) => {
         const starValue = i + 1;
         const isFilled = activeScore >= starValue;
@@ -82,14 +95,14 @@ const StarRating = ({
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: isFilled || isHalf ? 'var(--accent-gold)' : 'rgba(255, 255, 255, 0.18)',
-              transition: 'transform 120ms var(--ease-out), color 120ms var(--ease-out)',
-              transform: !readOnly && hoverRating === starValue ? 'scale(1.18)' : 'scale(1)',
+              color: isFilled || isHalf ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.18)',
+              transition: 'transform 100ms var(--ease-out), color 100ms var(--ease-out)',
+              transform: !readOnly && hoverRating === starValue ? 'scale(1.15)' : 'scale(1)',
             }}
           >
             <Star
               size={pixelSize}
-              fill={isFilled ? 'var(--accent-gold)' : isHalf ? 'url(#half-gold)' : 'transparent'}
+              fill={isFilled ? 'var(--accent-primary)' : isHalf ? 'url(#half-amber)' : 'transparent'}
               strokeWidth={1.5}
             />
           </button>
@@ -100,10 +113,10 @@ const StarRating = ({
         <span
           style={{
             marginLeft: '0.4rem',
-            fontSize: size === 'sm' ? '0.78rem' : '0.88rem',
+            fontSize: size === 'sm' ? '0.78rem' : '0.86rem',
             fontWeight: 600,
-            color: rating > 0 ? 'var(--accent-gold)' : 'var(--text-muted)',
-            fontFamily: 'var(--font-display)',
+            color: rating > 0 ? 'var(--accent-primary)' : 'var(--text-muted)',
+            fontVariantNumeric: 'tabular-nums',
           }}
         >
           {rating > 0 ? Number(rating).toFixed(1) : 'No rating'}

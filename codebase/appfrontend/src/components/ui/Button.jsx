@@ -19,13 +19,13 @@ const Button = ({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '0.5rem',
+    gap: '0.45rem',
     fontWeight: 600,
     fontFamily: 'var(--font-sans)',
-    borderRadius: 'var(--radius-sm)',
+    borderRadius: 'var(--radius-control)',
     cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.6 : 1,
-    transition: 'background 150ms var(--ease-out), color 150ms var(--ease-out), border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out)',
+    opacity: disabled ? 0.5 : 1,
+    transition: 'background 120ms var(--ease-out), color 120ms var(--ease-out), border-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out)',
     userSelect: 'none',
     whiteSpace: 'nowrap',
     textDecoration: 'none',
@@ -33,20 +33,20 @@ const Button = ({
   };
 
   const sizeStyles = {
-    sm: { padding: '0.4rem 0.75rem', fontSize: '0.82rem', height: '32px' },
-    md: { padding: '0.55rem 1.1rem', fontSize: '0.92rem', height: '40px' },
-    lg: { padding: '0.75rem 1.6rem', fontSize: '1.02rem', height: '48px' },
+    sm: { padding: '0.35rem 0.75rem', fontSize: '0.82rem', height: '32px' },
+    md: { padding: '0.5rem 1.1rem', fontSize: '0.9rem', height: '38px' },
+    lg: { padding: '0.65rem 1.5rem', fontSize: '0.96rem', height: '44px' },
   }[size] || sizeStyles.md;
 
   const variantStyles = {
     primary: {
-      background: 'var(--accent-green)',
-      color: '#07160d',
+      background: 'var(--accent-primary)',
+      color: 'var(--bg-app)',
       border: '1px solid transparent',
       boxShadow: 'var(--shadow-sm)',
     },
     secondary: {
-      background: 'var(--bg-elevated)',
+      background: 'var(--bg-surface)',
       color: 'var(--text-primary)',
       border: '1px solid var(--border-medium)',
     },

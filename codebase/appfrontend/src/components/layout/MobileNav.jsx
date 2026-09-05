@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Film, Search, Bookmark, BookOpen, User, Activity } from 'lucide-react';
+import { Film, Search, Bookmark, BookOpen, User } from 'lucide-react';
 
 const MobileNav = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   const isCurrent = (path) => location.pathname === path;
@@ -38,7 +38,7 @@ const MobileNav = () => {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '2px',
-          color: isCurrent('/') ? 'var(--accent-green)' : 'var(--text-muted)',
+          color: isCurrent('/') ? 'var(--accent-primary)' : 'var(--text-muted)',
           fontSize: '0.72rem',
           fontWeight: isCurrent('/') ? 600 : 500,
           padding: '4px',
@@ -56,7 +56,7 @@ const MobileNav = () => {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '2px',
-          color: isCurrent('/search') ? 'var(--accent-green)' : 'var(--text-muted)',
+          color: isCurrent('/search') ? 'var(--accent-primary)' : 'var(--text-muted)',
           fontSize: '0.72rem',
           fontWeight: isCurrent('/search') ? 600 : 500,
           padding: '4px',
@@ -76,7 +76,7 @@ const MobileNav = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: isCurrent('/watchlist') ? 'var(--accent-green)' : 'var(--text-muted)',
+              color: isCurrent('/watchlist') ? 'var(--accent-primary)' : 'var(--text-muted)',
               fontSize: '0.72rem',
               fontWeight: isCurrent('/watchlist') ? 600 : 500,
               padding: '4px',
@@ -94,7 +94,7 @@ const MobileNav = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: isCurrent('/diary') ? 'var(--accent-green)' : 'var(--text-muted)',
+              color: isCurrent('/diary') ? 'var(--accent-primary)' : 'var(--text-muted)',
               fontSize: '0.72rem',
               fontWeight: isCurrent('/diary') ? 600 : 500,
               padding: '4px',
@@ -112,7 +112,7 @@ const MobileNav = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: isCurrent('/profile/me') ? 'var(--accent-green)' : 'var(--text-muted)',
+              color: isCurrent('/profile/me') ? 'var(--accent-primary)' : 'var(--text-muted)',
               fontSize: '0.72rem',
               fontWeight: isCurrent('/profile/me') ? 600 : 500,
               padding: '4px',
@@ -131,7 +131,7 @@ const MobileNav = () => {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '2px',
-            color: isCurrent('/login') ? 'var(--accent-green)' : 'var(--text-muted)',
+            color: isCurrent('/login') ? 'var(--accent-primary)' : 'var(--text-muted)',
             fontSize: '0.72rem',
             fontWeight: 500,
             padding: '4px',

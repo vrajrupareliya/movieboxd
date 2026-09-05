@@ -41,9 +41,7 @@ const Modal = ({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '1rem',
-        background: 'rgba(5, 7, 10, 0.75)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        background: 'rgba(0, 0, 0, 0.82)',
       }}
       onClick={(e) => {
         if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -60,9 +58,9 @@ const Modal = ({
         style={{
           width: '100%',
           maxWidth,
-          background: 'var(--bg-elevated)',
+          background: 'var(--bg-surface)',
           border: '1px solid var(--border-medium)',
-          borderRadius: 'var(--radius-lg)',
+          borderRadius: 'var(--radius-modal)',
           boxShadow: 'var(--shadow-lg)',
           color: 'var(--text-primary)',
           overflow: 'hidden',
@@ -77,12 +75,12 @@ const Modal = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '1.25rem 1.5rem',
+            padding: '1.1rem 1.4rem',
             borderBottom: '1px solid var(--border-subtle)',
           }}
         >
           {title && (
-            <h3 id="modal-title" style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+            <h3 id="modal-title" style={{ fontSize: '1.15rem', fontWeight: 600 }}>
               {title}
             </h3>
           )}
@@ -90,20 +88,21 @@ const Modal = ({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
+            className="pressable"
             style={{
               color: 'var(--text-muted)',
               cursor: 'pointer',
               padding: '6px',
-              borderRadius: 'var(--radius-sm)',
+              borderRadius: 'var(--radius-xs)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'background 150ms var(--ease-out), color 150ms var(--ease-out)',
+              transition: 'background 120ms var(--ease-out), color 120ms var(--ease-out)',
               marginLeft: 'auto',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--text-primary)';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--text-muted)';
@@ -117,7 +116,7 @@ const Modal = ({
         {/* Body */}
         <div
           style={{
-            padding: '1.5rem',
+            padding: '1.4rem',
             overflowY: 'auto',
           }}
         >

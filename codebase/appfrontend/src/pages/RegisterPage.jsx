@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Film, User, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Film, User, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -71,8 +71,8 @@ const RegisterPage = () => {
           width: '100%',
           maxWidth: '440px',
           padding: '2.5rem 2rem',
-          background: 'var(--bg-elevated)',
-          borderRadius: 'var(--radius-lg)',
+          background: 'var(--bg-surface)',
+          borderRadius: 'var(--radius-card)',
           boxShadow: 'var(--shadow-lg)',
           display: 'flex',
           flexDirection: 'column',
@@ -83,23 +83,23 @@ const RegisterPage = () => {
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
           <div
             style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: 'var(--radius-md)',
-              background: 'linear-gradient(135deg, #00e054, #00b040)',
+              width: '36px',
+              height: '36px',
+              borderRadius: 'var(--radius-xs)',
+              background: 'var(--accent-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#07160d',
-              boxShadow: '0 4px 14px var(--accent-green-glow)',
+              color: 'var(--bg-app)',
+              boxShadow: 'var(--shadow-sm)',
               marginBottom: '0.25rem',
             }}
           >
-            <Film size={24} strokeWidth={2.5} />
+            <Film size={20} strokeWidth={2.5} />
           </div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Join Movieboxd</h1>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-            The social platform for film lovers. Track movies, rate, review, and follow friends.
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 600, letterSpacing: '-0.02em' }}>Join Movieboxd</h1>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+            The archival platform for film lovers. Track movies, rate, review, and follow friends.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ const RegisterPage = () => {
               padding: '0.75rem 1rem',
               background: 'var(--accent-danger-subtle)',
               border: '1px solid var(--accent-danger)',
-              borderRadius: 'var(--radius-sm)',
+              borderRadius: 'var(--radius-control)',
               color: 'var(--accent-danger)',
               fontSize: '0.85rem',
               textAlign: 'center',
@@ -166,7 +166,6 @@ const RegisterPage = () => {
             variant="primary"
             size="lg"
             isLoading={isLoading}
-            rightIcon={<ArrowRight size={18} />}
             style={{ width: '100%', marginTop: '0.5rem' }}
           >
             Create Account
@@ -176,7 +175,7 @@ const RegisterPage = () => {
         {/* Footer Link */}
         <div style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--accent-green)', fontWeight: 600 }}>
+          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
             Sign In here
           </Link>
         </div>

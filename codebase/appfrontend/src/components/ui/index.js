@@ -7,3 +7,4 @@ export { default as Skeleton, SkeletonPoster, SkeletonMovieCard, SkeletonReview 
 export { default as Badge } from './Badge';
 export { default as EmptyState } from './EmptyState';
 export { default as Pagination } from './Pagination';
+export { default as Avatar, getInitials } from './Avatar';

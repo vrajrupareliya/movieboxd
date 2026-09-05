@@ -42,21 +42,8 @@ const DiaryPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       {/* Page Header */}
       <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
-        <span
-          style={{
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            color: 'var(--accent-green)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            display: 'block',
-            marginBottom: '0.2rem',
-          }}
-        >
-          Logged Films
-        </span>
         <h1 style={{ fontSize: '2rem' }}>Diary</h1>
-        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
           {totalCount} {totalCount === 1 ? 'film logged' : 'films logged'}
         </p>
       </div>
@@ -124,7 +111,7 @@ const DiaryPage = () => {
                       style={{
                         width: '60px',
                         height: '90px',
-                        borderRadius: 'var(--radius-xs)',
+                        borderRadius: 'var(--radius-poster)',
                         objectFit: 'cover',
                         boxShadow: 'var(--shadow-sm)',
                       }}
@@ -158,9 +145,9 @@ const DiaryPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.35rem',
-                        fontSize: '0.8rem',
-                        color: 'var(--accent-green)',
-                        fontWeight: 600,
+                        fontSize: '0.78rem',
+                        color: 'var(--text-muted)',
+                        fontWeight: 500,
                       }}
                     >
                       <Calendar size={13} />

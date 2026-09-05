@@ -101,7 +101,7 @@ const MovieCard = ({
           position: 'relative',
           display: 'block',
           width: '100%',
-          borderRadius: 'var(--radius-sm)',
+          borderRadius: 'var(--radius-poster)',
           overflow: 'hidden',
         }}
       >
@@ -118,7 +118,7 @@ const MovieCard = ({
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to top, rgba(11, 14, 20, 0.95) 0%, rgba(11, 14, 20, 0.3) 50%, rgba(11, 14, 20, 0.6) 100%)',
+              background: 'linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.2) 50%, rgba(10, 10, 10, 0.6) 100%)',
               opacity: 0,
               transition: 'opacity 180ms var(--ease-out)',
               display: 'flex',
@@ -137,12 +137,12 @@ const MovieCard = ({
                   className="pressable"
                   title="Remove from Watchlist"
                   style={{
-                    background: 'rgba(239, 68, 68, 0.85)',
+                    background: 'var(--accent-danger)',
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 'var(--radius-full)',
-                    width: '32px',
-                    height: '32px',
+                    width: '30px',
+                    height: '30px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -150,7 +150,7 @@ const MovieCard = ({
                     boxShadow: 'var(--shadow-sm)',
                   }}
                 >
-                  <Trash2 size={15} />
+                  <Trash2 size={14} />
                 </button>
               ) : (
                 <button
@@ -159,22 +159,22 @@ const MovieCard = ({
                   className="pressable"
                   title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
                   style={{
-                    background: isInWatchlist ? 'var(--accent-green)' : 'rgba(16, 20, 29, 0.85)',
-                    color: isInWatchlist ? '#07160d' : '#ffffff',
+                    background: isInWatchlist ? 'var(--accent-primary)' : 'rgba(10, 10, 10, 0.85)',
+                    color: isInWatchlist ? 'var(--bg-app)' : '#ffffff',
                     border: '1px solid rgba(255, 255, 255, 0.15)',
                     borderRadius: 'var(--radius-full)',
-                    width: '32px',
-                    height: '32px',
+                    width: '30px',
+                    height: '30px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
                     boxShadow: 'var(--shadow-sm)',
-                    transition: 'background 150ms, color 150ms, transform 120ms',
+                    transition: 'background 120ms, color 120ms, transform 100ms',
                   }}
                 >
                   <Bookmark
-                    size={16}
+                    size={15}
                     fill={isInWatchlist ? 'currentColor' : 'none'}
                     strokeWidth={2}
                   />
@@ -188,14 +188,14 @@ const MovieCard = ({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.3rem',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: 'var(--accent-gold)',
-                  fontFamily: 'var(--font-display)',
+                  gap: '0.25rem',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: 'var(--accent-primary)',
+                  fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                <Star size={14} fill="var(--accent-gold)" />
+                <Star size={13} fill="var(--accent-primary)" />
                 <span>{Number(movie.averageRating).toFixed(1)}</span>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 400 }}>
                   ({movie.reviewCount || 0})
@@ -210,7 +210,7 @@ const MovieCard = ({
       <Link to={`/movies/${movieId}`} style={{ textDecoration: 'none' }}>
         <h4
           style={{
-            fontSize: '0.92rem',
+            fontSize: '0.9rem',
             fontWeight: 600,
             color: 'var(--text-primary)',
             lineHeight: 1.25,
@@ -219,6 +219,7 @@ const MovieCard = ({
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             transition: 'color var(--duration-fast)',
+            fontFamily: 'var(--font-sans)',
           }}
           title={movie.title}
         >
@@ -231,9 +232,10 @@ const MovieCard = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          fontSize: '0.8rem',
+          fontSize: '0.78rem',
           color: 'var(--text-muted)',
           lineHeight: 1,
+          fontVariantNumeric: 'tabular-nums',
         }}
       >
         <span>{movie.releaseYear || ''}</span>
@@ -243,11 +245,11 @@ const MovieCard = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.2rem',
-              color: 'var(--accent-gold)',
+              color: 'var(--accent-primary)',
               fontWeight: 600,
             }}
           >
-            <Star size={11} fill="var(--accent-gold)" />
+            <Star size={11} fill="var(--accent-primary)" />
             {Number(movie.averageRating).toFixed(1)}
           </span>
         )}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import Pagination from '../ui/Pagination';
+import Avatar from '../ui/Avatar';
 import { Skeleton } from '../ui/Skeleton';
 import { socialApi } from '../../api';
 import { useAuth } from '../../context/AuthContext';
@@ -114,21 +115,11 @@ const FollowersModal = ({
                   onClick={onClose}
                   style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}
                 >
-                  <img
-                    src={
-                      item.profilePictureUrl ||
-                      `https://placehold.co/100x100/171d27/00e054?text=${
-                        item.username?.charAt(0).toUpperCase() || 'U'
-                      }`
-                    }
-                    alt={item.username}
-                    style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: '1px solid var(--border-medium)',
-                    }}
+                  <Avatar
+                    src={item.profilePictureUrl}
+                    name={item.username || 'User'}
+                    size={38}
+                    fontSize="0.85rem"
                   />
                   <div>
                     <h5 style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>

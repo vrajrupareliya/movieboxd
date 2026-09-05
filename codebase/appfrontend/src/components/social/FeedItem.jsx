@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Calendar, MessageSquare } from 'lucide-react';
 import StarRating from '../ui/StarRating';
+import Avatar from '../ui/Avatar';
 
 const FeedItem = ({ item }) => {
   if (!item) return null;
@@ -30,32 +31,16 @@ const FeedItem = ({ item }) => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Link to={`/users/${user._id}`}>
-            <img
-              src={
-                user.profilePictureUrl ||
-                `https://placehold.co/100x100/171d27/00e054?text=${
-                  user.username?.charAt(0).toUpperCase() || 'U'
-                }`
-              }
-              alt={user.username}
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '1px solid var(--border-medium)',
-              }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = `https://placehold.co/100x100/171d27/00e054?text=${
-                  user.username?.charAt(0).toUpperCase() || 'U'
-                }`;
-              }}
+            <Avatar
+              src={user.profilePictureUrl}
+              name={user.username || 'User'}
+              size={36}
+              fontSize="0.82rem"
             />
           </Link>
           <div>
-            <div style={{ fontSize: '0.92rem' }}>
-              <Link to={`/users/${user._id}`} style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+            <div style={{ fontSize: '0.9rem' }}>
+              <Link to={`/users/${user._id}`} style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                 {user.username}
               </Link>{' '}
               <span style={{ color: 'var(--text-muted)' }}>reviewed</span>
@@ -65,7 +50,7 @@ const FeedItem = ({ item }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 color: 'var(--text-muted)',
               }}
             >
@@ -83,9 +68,9 @@ const FeedItem = ({ item }) => {
         style={{
           display: 'flex',
           gap: '1rem',
-          background: 'var(--bg-elevated)',
-          padding: '1rem',
-          borderRadius: 'var(--radius-md)',
+          background: 'rgba(255, 255, 255, 0.02)',
+          padding: '0.85rem',
+          borderRadius: 'var(--radius-card)',
           border: '1px solid var(--border-subtle)',
         }}
       >
@@ -95,9 +80,9 @@ const FeedItem = ({ item }) => {
               src={movie.posterUrl}
               alt={movie.title}
               style={{
-                width: '64px',
-                height: '96px',
-                borderRadius: 'var(--radius-xs)',
+                width: '60px',
+                height: '90px',
+                borderRadius: 'var(--radius-poster)',
                 objectFit: 'cover',
                 boxShadow: 'var(--shadow-sm)',
               }}

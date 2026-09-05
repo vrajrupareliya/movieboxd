@@ -69,22 +69,9 @@ const WatchlistPage = () => {
         }}
       >
         <div>
-          <span
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 600,
-              color: 'var(--accent-green)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              display: 'block',
-              marginBottom: '0.2rem',
-            }}
-          >
-            My Library
-          </span>
           <h1 style={{ fontSize: '2rem' }}>Watchlist</h1>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            {watchlist.length} {watchlist.length === 1 ? 'film you want to see' : 'films you want to see'}
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+            {watchlist.length} {watchlist.length === 1 ? 'film in personal library' : 'films in personal library'}
           </p>
         </div>
 
@@ -96,14 +83,14 @@ const WatchlistPage = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               style={{
-                background: 'var(--bg-elevated)',
+                background: 'var(--bg-surface)',
                 color: 'var(--text-primary)',
                 border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.45rem 0.75rem',
+                padding: '0.45rem 0.85rem',
+                borderRadius: 'var(--radius-control)',
                 fontSize: '0.85rem',
-                outline: 'none',
                 cursor: 'pointer',
+                outline: 'none',
               }}
             >
               <option value="recent">Recently Added</option>

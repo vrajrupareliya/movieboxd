@@ -7,13 +7,13 @@ const MoviePoster = ({
   aspectRatio = '2 / 3',
   className = '',
   style = {},
-  borderRadius = 'var(--radius-sm)',
+  borderRadius = 'var(--radius-poster)',
   fallbackTitle = '',
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
-  const fallbackUrl = `https://placehold.co/300x450/141a24/00e054?text=${encodeURIComponent(fallbackTitle || alt)}`;
+  const fallbackUrl = `https://placehold.co/300x450/161616/8c8c8c?text=${encodeURIComponent(fallbackTitle || alt)}`;
 
   return (
     <div
@@ -25,6 +25,7 @@ const MoviePoster = ({
         borderRadius,
         overflow: 'hidden',
         background: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         boxShadow: 'var(--shadow-poster)',
         ...style,
       }}
@@ -59,7 +60,7 @@ const MoviePoster = ({
             height: '100%',
             objectFit: 'cover',
             opacity: loaded ? 1 : 0,
-            transition: 'opacity 250ms var(--ease-out), transform 300ms var(--ease-out)',
+            transition: 'opacity 200ms var(--ease-out), transform 250ms var(--ease-out)',
           }}
         />
       )}
@@ -81,13 +82,13 @@ const MoviePoster = ({
             gap: '0.5rem',
           }}
         >
-          <Film size={28} color="var(--accent-green)" />
+          <Film size={26} color="var(--accent-primary)" />
           <span
             style={{
               fontSize: '0.8rem',
-              fontWeight: 600,
+              fontWeight: 500,
               color: 'var(--text-primary)',
-              lineHeight: 1.2,
+              lineHeight: 1.25,
               display: '-webkit-box',
               WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Film, Search, Bookmark, BookOpen, Activity, User, Settings, LogOut, Menu, X } from 'lucide-react';
 import Button from '../ui/Button';
+import Avatar from '../ui/Avatar';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -77,30 +78,30 @@ const Navbar = () => {
             alignItems: 'center',
             gap: '0.5rem',
             fontFamily: 'var(--font-display)',
-            fontWeight: 800,
+            fontWeight: 600,
             fontSize: '1.35rem',
             color: 'var(--text-primary)',
-            letterSpacing: '-0.03em',
+            letterSpacing: '-0.025em',
             flexShrink: 0,
           }}
         >
           <div
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'linear-gradient(135deg, #00e054, #00b040)',
+              width: '28px',
+              height: '28px',
+              borderRadius: 'var(--radius-xs)',
+              background: 'var(--accent-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#07160d',
-              boxShadow: '0 2px 8px var(--accent-green-glow)',
+              color: 'var(--bg-app)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <Film size={18} strokeWidth={2.5} />
+            <Film size={16} strokeWidth={2.5} />
           </div>
           <span>
-            movie<span style={{ color: 'var(--accent-green)' }}>boxd</span>
+            Movie<span style={{ color: 'var(--accent-primary)' }}>boxd</span>
           </span>
         </Link>
 
@@ -109,8 +110,8 @@ const Navbar = () => {
           style={{
             display: 'none',
             alignItems: 'center',
-            gap: '1.25rem',
-            fontSize: '0.9rem',
+            gap: '1.5rem',
+            fontSize: '0.88rem',
             fontWeight: 500,
           }}
           className="desktop-nav"
@@ -118,7 +119,7 @@ const Navbar = () => {
           <Link
             to="/"
             style={{
-              color: isCurrent('/') ? 'var(--accent-green)' : 'var(--text-secondary)',
+              color: isCurrent('/') ? 'var(--accent-primary)' : 'var(--text-secondary)',
               transition: 'color var(--duration-fast)',
             }}
           >
@@ -129,7 +130,7 @@ const Navbar = () => {
               <Link
                 to="/feed"
                 style={{
-                  color: isCurrent('/feed') ? 'var(--accent-green)' : 'var(--text-secondary)',
+                  color: isCurrent('/feed') ? 'var(--accent-primary)' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
@@ -140,7 +141,7 @@ const Navbar = () => {
               <Link
                 to="/diary"
                 style={{
-                  color: isCurrent('/diary') ? 'var(--accent-green)' : 'var(--text-secondary)',
+                  color: isCurrent('/diary') ? 'var(--accent-primary)' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
@@ -151,7 +152,7 @@ const Navbar = () => {
               <Link
                 to="/watchlist"
                 style={{
-                  color: isCurrent('/watchlist') ? 'var(--accent-green)' : 'var(--text-secondary)',
+                  color: isCurrent('/watchlist') ? 'var(--accent-primary)' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
@@ -200,7 +201,7 @@ const Navbar = () => {
               outline: 'none',
               transition: 'border-color 150ms var(--ease-out), background 150ms var(--ease-out)',
             }}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--accent-green)')}
+            onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
             onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
           />
         </form>
@@ -218,7 +219,7 @@ const Navbar = () => {
                   alignItems: 'center',
                   gap: '0.5rem',
                   padding: '4px 8px',
-                  borderRadius: 'var(--radius-full)',
+                  borderRadius: 'var(--radius-control)',
                   background: userMenuOpen ? 'var(--bg-surface-hover)' : 'transparent',
                   cursor: 'pointer',
                   border: '1px solid var(--border-subtle)',
@@ -226,24 +227,16 @@ const Navbar = () => {
                 aria-expanded={userMenuOpen}
                 aria-haspopup="true"
               >
-                <img
-                  src={user?.profilePictureUrl || `https://placehold.co/100x100/171d27/00e054?text=${user?.username?.charAt(0).toUpperCase() || 'U'}`}
-                  alt={user?.username}
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                  }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = `https://placehold.co/100x100/171d27/00e054?text=${user?.username?.charAt(0).toUpperCase() || 'U'}`;
-                  }}
+                <Avatar
+                  src={user?.profilePictureUrl}
+                  name={user?.username}
+                  size={26}
+                  fontSize="0.75rem"
                 />
                 <span
                   className="navbar-username"
                   style={{
-                    fontSize: '0.88rem',
+                    fontSize: '0.86rem',
                     fontWeight: 600,
                     color: 'var(--text-primary)',
                     maxWidth: '110px',
@@ -265,9 +258,9 @@ const Navbar = () => {
                     top: 'calc(100% + 8px)',
                     right: 0,
                     width: '210px',
-                    background: 'var(--bg-elevated)',
+                    background: 'var(--bg-surface)',
                     border: '1px solid var(--border-medium)',
-                    borderRadius: 'var(--radius-md)',
+                    borderRadius: 'var(--radius-modal)',
                     boxShadow: 'var(--shadow-lg)',
                     padding: '6px',
                     zIndex: 2000,
@@ -378,7 +371,7 @@ const Navbar = () => {
             top: 'var(--nav-height)',
             left: 0,
             right: 0,
-            background: 'var(--bg-elevated)',
+            background: 'var(--bg-surface)',
             borderBottom: '1px solid var(--border-medium)',
             padding: '1.25rem',
             display: 'flex',

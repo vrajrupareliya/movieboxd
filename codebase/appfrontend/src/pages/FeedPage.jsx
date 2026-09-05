@@ -41,21 +41,8 @@ const FeedPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       {/* Header */}
       <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
-        <span
-          style={{
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            color: 'var(--accent-green)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            display: 'block',
-            marginBottom: '0.2rem',
-          }}
-        >
-          Community
-        </span>
         <h1 style={{ fontSize: '2rem' }}>Activity</h1>
-        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
           Recent reviews and ratings from members you follow.
         </p>
       </div>

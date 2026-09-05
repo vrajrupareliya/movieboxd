@@ -20,8 +20,8 @@ const ProtectedRoute = ({ children }) => {
           color: 'var(--text-muted)',
         }}
       >
-        <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--accent-green)' }} />
-        <span style={{ fontSize: '0.9rem' }}>Verifying session...</span>
+        <Loader2 size={28} style={{ animation: 'spin 1s linear infinite', color: 'var(--accent-primary)' }} />
+        <span style={{ fontSize: '0.88rem' }}>Verifying session...</span>
       </div>
     );
   }

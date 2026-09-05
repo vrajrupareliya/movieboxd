@@ -8,8 +8,8 @@ const Footer = () => {
       style={{
         marginTop: 'auto',
         borderTop: '1px solid var(--border-subtle)',
-        background: 'var(--bg-primary)',
-        padding: '3rem 0 2rem 0',
+        background: 'var(--bg-app)',
+        padding: '3rem 0 2.5rem 0',
         color: 'var(--text-muted)',
         fontSize: '0.88rem',
       }}
@@ -32,7 +32,7 @@ const Footer = () => {
           }}
         >
           {/* Logo & Tagline */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             <Link
               to="/"
               style={{
@@ -40,18 +40,19 @@ const Footer = () => {
                 alignItems: 'center',
                 gap: '0.5rem',
                 fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: '1.2rem',
+                fontWeight: 600,
+                fontSize: '1.25rem',
                 color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
               }}
             >
-              <Film size={18} color="var(--accent-green)" />
+              <Film size={17} color="var(--accent-primary)" />
               <span>
-                movie<span style={{ color: 'var(--accent-green)' }}>boxd</span>
+                Movie<span style={{ color: 'var(--accent-primary)' }}>boxd</span>
               </span>
             </Link>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              The social network for film lovers. Track, rate, and discover films.
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              The archival catalogue for film lovers. Track, rate, and critique films.
             </p>
           </div>
 
@@ -85,12 +86,9 @@ const Footer = () => {
             gap: '1rem',
           }}
         >
-          <p>© {new Date().getFullYear()} Movieboxd. Crafted with care for cinephiles.</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span>Made with</span>
-            <Heart size={13} color="var(--accent-green)" fill="var(--accent-green)" />
-            <span>for cinema</span>
-          </div>
+          <p style={{ textAlign: 'center', width: '100%', color: 'var(--text-muted)' }}>
+            © {new Date().getFullYear()} Movieboxd. Crafted for cinephiles.
+          </p>
         </div>
       </div>
     </footer>

@@ -174,7 +174,6 @@ const MovieDetailPage = () => {
           borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
           background: `linear-gradient(to top, rgba(11, 14, 20, 1) 0%, rgba(16, 20, 29, 0.8) 50%, rgba(16, 20, 29, 0.4) 100%), url(${movie.posterUrl}) center/cover no-repeat`,
-          border: '1px solid var(--border-subtle)',
           padding: 'clamp(1.5rem, 4vw, 3rem)',
           boxShadow: 'var(--shadow-lg)',
         }}
@@ -213,7 +212,7 @@ const MovieDetailPage = () => {
                 src={movie.posterUrl}
                 alt={movie.title}
                 fallbackTitle={movie.title}
-                borderRadius="var(--radius-md)"
+                borderRadius="var(--radius-poster)"
                 style={{ boxShadow: 'var(--shadow-poster)' }}
               />
             </div>
@@ -233,9 +232,10 @@ const MovieDetailPage = () => {
               <div>
                 <h1
                   style={{
-                    fontSize: 'clamp(1.8rem, 4vw, 2.75rem)',
-                    fontWeight: 800,
+                    fontSize: 'clamp(2rem, 4vw, 2.85rem)',
+                    fontWeight: 600,
                     lineHeight: 1.1,
+                    letterSpacing: '-0.025em',
                   }}
                 >
                   {movie.title}
@@ -256,25 +256,26 @@ const MovieDetailPage = () => {
                       Directed by <strong style={{ color: 'var(--text-primary)' }}>{movie.director}</strong>
                     </span>
                   )}
+                  {movie.runtime > 0 && <span>{movie.runtime} mins</span>}
                 </div>
               </div>
 
-              {/* Community Rating Bar */}
+              {/* Rating Highlight */}
               <div
                 style={{
-                  display: 'inline-flex',
+                  display: 'flex',
                   alignItems: 'center',
                   gap: '1rem',
                   padding: '0.75rem 1rem',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--bg-surface)',
+                  borderRadius: 'var(--radius-control)',
                   border: '1px solid var(--border-subtle)',
                   width: 'fit-content',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Star size={24} fill="var(--accent-gold)" color="var(--accent-gold)" />
-                  <span style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+                  <Star size={22} fill="var(--accent-primary)" color="var(--accent-primary)" />
+                  <span style={{ fontSize: '1.35rem', fontWeight: 600, fontFamily: 'var(--font-sans)', fontVariantNumeric: 'tabular-nums', color: 'var(--text-primary)' }}>
                     {movie.averageRating > 0 ? Number(movie.averageRating).toFixed(1) : '-'}
                   </span>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>/ 5</span>
@@ -288,10 +289,10 @@ const MovieDetailPage = () => {
               {/* Synopsis */}
               {movie.synopsis && (
                 <div>
-                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem', fontFamily: 'var(--font-sans)', fontWeight: 500 }}>
                     Synopsis
                   </h4>
-                  <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+                  <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--text-secondary)', maxWidth: '70ch' }}>
                     {movie.synopsis}
                   </p>
                 </div>
@@ -300,8 +301,8 @@ const MovieDetailPage = () => {
               {/* Cast */}
               {movie.cast && movie.cast.length > 0 && (
                 <div>
-                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
-                    Starring
+                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem', fontFamily: 'var(--font-sans)', fontWeight: 500 }}>
+                    Cast
                   </h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                     {movie.cast.map((actor) => (
@@ -338,7 +339,7 @@ const MovieDetailPage = () => {
                     variant="outline"
                     size="md"
                     onClick={() => handleOpenComposer(userExistingReview)}
-                    leftIcon={<Star size={18} fill="var(--accent-gold)" color="var(--accent-gold)" />}
+                    leftIcon={<Star size={18} fill="var(--accent-primary)" color="var(--accent-primary)" />}
                   >
                     Edit Your Review ({userExistingReview.rating}★)
                   </Button>
@@ -370,22 +371,10 @@ const MovieDetailPage = () => {
           }}
         >
           <div>
-            <span
-              style={{
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                color: 'var(--accent-green)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                display: 'block',
-                marginBottom: '0.2rem',
-              }}
-            >
-              Member Opinions
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 600 }}>Member Reviews</h2>
+            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              Critiques from the community
             </span>
-            <h2 style={{ fontSize: '1.4rem' }}>
-              Reviews ({totalReviewsCount})
-            </h2>
           </div>
 
           <Button

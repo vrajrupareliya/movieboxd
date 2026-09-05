@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Edit3, Trash2, Calendar } from 'lucide-react';
 import StarRating from '../ui/StarRating';
+import Avatar from '../ui/Avatar';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { reviewsApi } from '../../api';
@@ -90,27 +91,11 @@ const ReviewCard = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* User Avatar */}
           <Link to={`/users/${reviewUser._id || reviewUser}`}>
-            <img
-              src={
-                reviewUser.profilePictureUrl ||
-                `https://placehold.co/100x100/171d27/00e054?text=${
-                  reviewUser.username?.charAt(0).toUpperCase() || 'U'
-                }`
-              }
-              alt={reviewUser.username || 'Reviewer'}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '1px solid var(--border-medium)',
-              }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = `https://placehold.co/100x100/171d27/00e054?text=${
-                  reviewUser.username?.charAt(0).toUpperCase() || 'U'
-                }`;
-              }}
+            <Avatar
+              src={reviewUser.profilePictureUrl}
+              name={reviewUser.username || 'Reviewer'}
+              size={36}
+              fontSize="0.82rem"
             />
           </Link>
 
@@ -120,7 +105,7 @@ const ReviewCard = ({
                 to={`/users/${reviewUser._id || reviewUser}`}
                 style={{
                   fontWeight: 600,
-                  fontSize: '0.92rem',
+                  fontSize: '0.9rem',
                   color: 'var(--text-primary)',
                 }}
               >
@@ -133,7 +118,7 @@ const ReviewCard = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 color: 'var(--text-muted)',
               }}
             >
@@ -161,7 +146,7 @@ const ReviewCard = ({
                     borderRadius: 'var(--radius-xs)',
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-cyan)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-primary)')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
                 >
                   <Edit3 size={15} />

@@ -9,6 +9,7 @@ import FollowersModal from '../components/social/FollowersModal';
 import Button from '../components/ui/Button';
 import Pagination from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import Avatar from '../components/ui/Avatar';
 
 const UserProfilePage = () => {
   const { userId } = useParams();
@@ -169,7 +170,7 @@ const UserProfilePage = () => {
         <div
           style={{
             height: '140px',
-            background: 'linear-gradient(135deg, #10141d 0%, #1a2230 50%, #00e054 180%)',
+            background: 'linear-gradient(135deg, #111111 0%, #161616 60%, rgba(232, 163, 61, 0.06) 100%)',
             borderBottom: '1px solid var(--border-subtle)',
           }}
         />
@@ -195,23 +196,14 @@ const UserProfilePage = () => {
               gap: '1rem',
             }}
           >
-            <img
-              src={
-                profile.profilePictureUrl ||
-                `https://placehold.co/150x150/171d27/00e054?text=${profile.username?.charAt(0).toUpperCase() || 'U'}`
-              }
-              alt={profile.username}
+            <Avatar
+              src={profile.profilePictureUrl}
+              name={profile.username}
+              size={96}
+              fontSize="2rem"
               style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '4px solid var(--bg-elevated)',
+                border: '3px solid var(--border-medium)',
                 boxShadow: 'var(--shadow-md)',
-              }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = `https://placehold.co/150x150/171d27/00e054?text=${profile.username?.charAt(0).toUpperCase() || 'U'}`;
               }}
             />
 
@@ -238,15 +230,15 @@ const UserProfilePage = () => {
 
           {/* User Bio & Info */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>{profile.username}</h1>
+            <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.8rem', fontWeight: 600, letterSpacing: '-0.02em' }}>{profile.username}</h1>
 
             {profile.bio && (
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '640px' }}>
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', maxWidth: '640px', lineHeight: 1.6 }}>
                 {profile.bio}
               </p>
             )}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
               {profile.location && (
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   <MapPin size={14} /> {profile.location}
@@ -271,19 +263,19 @@ const UserProfilePage = () => {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+              <span style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
                 {totalReviews}
               </span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Reviews Logged
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                Reviews logged
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
+              <span style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
                 {profile.watchlist?.length || 0}
               </span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 Watchlist
               </span>
             </div>
@@ -299,10 +291,10 @@ const UserProfilePage = () => {
                 textAlign: 'left',
               }}
             >
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--accent-green)', fontFamily: 'var(--font-display)' }}>
+              <span style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>
                 {profile.followersCount || 0}
               </span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 Followers
               </span>
             </button>
@@ -318,10 +310,10 @@ const UserProfilePage = () => {
                 textAlign: 'left',
               }}
             >
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--accent-green)', fontFamily: 'var(--font-display)' }}>
+              <span style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--accent-primary)', fontVariantNumeric: 'tabular-nums' }}>
                 {profile.followingCount || 0}
               </span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 Following
               </span>
             </button>

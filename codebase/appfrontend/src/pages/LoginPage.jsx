@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Film, User, Lock, ArrowRight } from 'lucide-react';
+import { Film, User, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -52,8 +52,8 @@ const LoginPage = () => {
           width: '100%',
           maxWidth: '420px',
           padding: '2.5rem 2rem',
-          background: 'var(--bg-elevated)',
-          borderRadius: 'var(--radius-lg)',
+          background: 'var(--bg-surface)',
+          borderRadius: 'var(--radius-card)',
           boxShadow: 'var(--shadow-lg)',
           display: 'flex',
           flexDirection: 'column',
@@ -64,22 +64,22 @@ const LoginPage = () => {
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
           <div
             style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: 'var(--radius-md)',
-              background: 'linear-gradient(135deg, #00e054, #00b040)',
+              width: '36px',
+              height: '36px',
+              borderRadius: 'var(--radius-xs)',
+              background: 'var(--accent-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#07160d',
-              boxShadow: '0 4px 14px var(--accent-green-glow)',
+              color: 'var(--bg-app)',
+              boxShadow: 'var(--shadow-sm)',
               marginBottom: '0.25rem',
             }}
           >
-            <Film size={24} strokeWidth={2.5} />
+            <Film size={20} strokeWidth={2.5} />
           </div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Welcome Back</h1>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 600, letterSpacing: '-0.02em' }}>Welcome Back</h1>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
             Sign in to track films, write reviews, and share with friends.
           </p>
         </div>
@@ -91,7 +91,7 @@ const LoginPage = () => {
               padding: '0.75rem 1rem',
               background: 'var(--accent-danger-subtle)',
               border: '1px solid var(--accent-danger)',
-              borderRadius: 'var(--radius-sm)',
+              borderRadius: 'var(--radius-control)',
               color: 'var(--accent-danger)',
               fontSize: '0.85rem',
               textAlign: 'center',
@@ -127,7 +127,6 @@ const LoginPage = () => {
             variant="primary"
             size="lg"
             isLoading={isLoading}
-            rightIcon={<ArrowRight size={18} />}
             style={{ width: '100%', marginTop: '0.5rem' }}
           >
             Sign In
@@ -137,7 +136,7 @@ const LoginPage = () => {
         {/* Footer Link */}
         <div style={{ textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--accent-green)', fontWeight: 600 }}>
+          <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
             Create one free
           </Link>
         </div>

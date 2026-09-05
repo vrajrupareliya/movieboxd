@@ -74,25 +74,12 @@ const SearchPage = () => {
       {/* Header & Search Bar Input */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div>
-          <span
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 600,
-              color: 'var(--accent-green)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              display: 'block',
-              marginBottom: '0.2rem',
-            }}
-          >
-            Find Films
-          </span>
-          <h1 style={{ fontSize: '2rem' }}>Search Movieboxd</h1>
+          <h1 style={{ fontSize: '2rem' }}>Search Catalogue</h1>
         </div>
 
         <form onSubmit={handleSubmit} style={{ position: 'relative', width: '100%', maxWidth: '640px' }}>
           <SearchIcon
-            size={20}
+            size={18}
             style={{
               position: 'absolute',
               left: '1.1rem',
@@ -104,27 +91,25 @@ const SearchPage = () => {
           />
           <input
             type="text"
-            placeholder="Search by movie title..."
+            placeholder="Search by film title..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.85rem 3rem 0.85rem 3rem',
-              fontSize: '1rem',
+              padding: '0.8rem 3rem 0.8rem 2.75rem',
+              fontSize: '0.96rem',
               color: 'var(--text-primary)',
               background: 'var(--bg-surface)',
               border: '1px solid var(--border-medium)',
-              borderRadius: 'var(--radius-full)',
+              borderRadius: 'var(--radius-control)',
               outline: 'none',
-              transition: 'border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out)',
+              transition: 'border-color 150ms var(--ease-out)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = 'var(--accent-green)';
-              e.target.style.boxShadow = '0 0 0 3px var(--accent-green-subtle)';
+              e.target.style.borderColor = 'var(--accent-primary)';
             }}
             onBlur={(e) => {
               e.target.style.borderColor = 'var(--border-medium)';
-              e.target.style.boxShadow = 'none';
             }}
           />
           {query && (
