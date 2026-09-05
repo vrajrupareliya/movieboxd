@@ -26,23 +26,8 @@ const HomePage = () => {
         const movies = await moviesApi.getPopular();
         setPopularMovies(movies);
         if (movies.length > 0) {
-          // Feature 'Interstellar' in the hero spotlight
-          let featured = movies.find(
-            (m) => m.title?.toLowerCase() === 'interstellar'
-          );
-          if (!featured) {
-            try {
-              const searchResults = await moviesApi.search('Interstellar');
-              if (searchResults?.length > 0) {
-                featured = searchResults.find(
-                  (m) => m.title?.toLowerCase() === 'interstellar'
-                ) || searchResults[0];
-              }
-            } catch {
-              // Ignore search fallback error
-            }
-          }
-          setFeaturedMovie(featured || movies[0]);
+          // Pick the first as spotlight or highest rated
+          setFeaturedMovie(movies[0]);
         }
       } catch {
         // Handled silently
